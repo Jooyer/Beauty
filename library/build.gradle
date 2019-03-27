@@ -1,0 +1,82 @@
+apply plugin: 'com.android.library'
+apply from: 'library.gradle'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+apply plugin: 'kotlin-android-extensions'
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+//    api files('libs/Baidu_MobAds_SDK.jar')  通过上面方式可以直接引入接 jar
+
+    api rootProject.ext.dependencies.kotlin_stdlib
+    api rootProject.ext.dependencies.androidx_appcompat
+    api rootProject.ext.dependencies.androidx_core
+    api rootProject.ext.dependencies.androidx_legacy
+
+    api rootProject.ext.dependencies.appcompat_v7
+    api rootProject.ext.dependencies.appcompat_v4
+    api rootProject.ext.dependencies.design
+    api rootProject.ext.dependencies.constraint_layout
+
+
+    api rootProject.ext.dependencies.rxandroid
+    api rootProject.ext.dependencies.rxjava
+    api rootProject.ext.dependencies.retrofit
+    api rootProject.ext.dependencies.adapter_rxjava
+    api rootProject.ext.dependencies.converter_scalars
+    api rootProject.ext.dependencies.converter_gson
+
+//    api rootProject.ext.dependencies.extensions
+//    api rootProject.ext.dependencies.viewmodel
+//    api rootProject.ext.dependencies.livedata
+//    kapt rootProject.ext.dependencies.compiler
+//    api rootProject.ext.dependencies.room
+//    kapt rootProject.ext.dependencies.room_compiler
+
+    api rootProject.ext.dependencies.lifecycle_runtime
+    kapt rootProject.ext.dependencies.lifecycle_compiler
+    api rootProject.ext.dependencies.lifecycle_livedata
+    api rootProject.ext.dependencies.lifecycle_viewmodel
+    api rootProject.ext.dependencies.room_runtime
+    kapt rootProject.ext.dependencies.room_compiler
+
+    api rootProject.ext.dependencies.paging
+
+    api rootProject.ext.dependencies.permission
+
+    api rootProject.ext.dependencies.multidex
+
+    api rootProject.ext.dependencies.mmkv
+
+    api rootProject.ext.dependencies.preLoader
+
+    // 通过 Jar 引入了
+//    api rootProject.ext.dependencies.bugly
+
+    api rootProject.ext.dependencies.glide
+    kapt rootProject.ext.dependencies.glide_compiler
+
+
+    api rootProject.ext.dependencies.packer_ng
+
+    api rootProject.ext.dependencies.rxrouter
+    kapt rootProject.ext.dependencies.rxrouter_compiler
+
+    api(rootProject.ext.dependencies.recyclerview) {
+        exclude module: 'support-v7'//根据组件名排除
+    }
+    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    // https://stackoverflow.com/questions/49038630/android-compilation-error-with-v7-support-lib-27-1-0-program-type-already-pres/49040625#49040625 (可以参考)
+    // 以下无效方式
+    // Error:Program type already present: android.support.v7.recyclerview.extensions.ListAdapter
+    configurations {
+        all*.exclude group: 'com.android.support', module: 'support-v13'
+    }
+
+    testImplementation rootProject.ext.dependencies.junit
+    androidTestImplementation rootProject.ext.dependencies.runner
+    androidTestImplementation rootProject.ext.dependencies.espresso_core
+
+
+}

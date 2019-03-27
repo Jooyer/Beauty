@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cl_root_ad"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    >
+
+    <LinearLayout
+        android:id="@+id/ll_ad_container_ad"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        />
+
+    <com.meirenmeitu.base.define.CountDownView
+        android:id="@+id/cdv_count_down_ad"
+        android:layout_width="@dimen/width_40"
+        android:layout_height="@dimen/height_40"
+        android:layout_marginTop="@dimen/padding_30"
+        android:layout_marginEnd="@dimen/padding_12"
+        android:background="@android:color/transparent"
+        android:visibility="gone"
+        app:cdv_circle_color="@color/color_2E2E2E"
+        app:cdv_ring_color="@color/colorAccent"
+        app:cdv_ring_width="@dimen/padding_2"
+        app:cdv_text_size="@dimen/text_size_14"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

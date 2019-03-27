@@ -1,0 +1,31 @@
+class CollectFragment : BaseFragment<CollectPresenter>() {
+
+    companion object {
+        val TAG = CollectFragment::class.java.simpleName
+        fun newInstance() = CollectFragment()
+    }
+
+    override fun createPresenter() = CollectPresenter(this)
+
+    override fun getLayoutId() = R.layout.fragment_collect
+    override fun setLogic() {
+        resetToolbar()
+    }
+
+    override fun bindEvent() {
+
+    }
+
+    /**
+     *  重置 Toolbar 高度
+     */
+    private fun resetToolbar() {
+        val param = ct_toolbar.layoutParams as ConstraintLayout.LayoutParams
+        val statusBarHeight = StatusBarUtil.getStatusBarHeight(mActivity)
+        ct_toolbar.setPadding(0, statusBarHeight, 0, 0)
+        param.height = DensityUtils.dpToPx(50) + statusBarHeight
+        ct_toolbar.layoutParams = param
+    }
+
+
+}

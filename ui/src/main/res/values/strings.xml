@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="ExtraTranslation">
+
+    <string name="ui_data_empty">暂时没有数据!</string>
+    <string name="ui_net_error_retry">点击任意位置重试</string>
+    <string name="ui_net_error_tip">网络错误&#8230;</string>
+    <string name="ui_other_error_tip">解析错误,请稍候重试&#8230;</string>
+
+</resources>

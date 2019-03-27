@@ -1,0 +1,25 @@
+<resources>
+
+    <string-array name="left_menu">
+        <item>我的收藏</item>
+        <item>我的下载</item>
+        <item>最近欣赏</item>
+        <item>分类管理</item>
+        <item>意见反馈</item>
+        <item>支持一下</item>
+        <item>版本更新</item>
+        <item>分享APP</item>
+    </string-array>
+
+    <string-array name="left_menu_icon">
+        <item>ic_menu_gallery</item>
+        <item>ic_menu_manage</item>
+        <item>ic_menu_send</item>
+        <item>ic_menu_share</item>
+        <item>ic_menu_slideshow</item>
+        <item>ic_menu_send</item>
+        <item>ic_menu_gallery</item>
+        <item>ic_menu_share</item>
+    </string-array>
+
+</resources>
