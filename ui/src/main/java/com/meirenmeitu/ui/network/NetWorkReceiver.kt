@@ -21,26 +21,32 @@ import com.tencent.mmkv.MMKV
  * Time: 17:29
  */
 class NetWorkReceiver(private val listener: OnNetWorkListener) : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent?) {
-        val cManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager? ?: return
 
-        // 获取所有网络信息
-        val allNetWorks = cManager!!.allNetworks
-        if (allNetWorks.isNotEmpty()) {
-            outside@ allNetWorks.forEach {
-                val info = cManager.getNetworkInfo(it)
-                if (null != info && info.isConnected) {
-                    MMKV.defaultMMKV().encode(Constants.KEY_NETWORK_STATE, true)
-                    listener.onAvailable(info)
-                    return@outside
-                } else {
-                    MMKV.defaultMMKV().encode(Constants.KEY_NETWORK_STATE, false)
-                    listener.onLost()
+    override fun onReceive(context: Context, intent: Intent) {
+        if (Constants.CONNECTIVITY_CHANGE == intent.action
+            || Constants.WIFI_STATE_CHANGED == intent.action
+            || Constants.STATE_CHANGE == intent.action ){
+            val cManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager? ?: return
+
+            // 获取所有网络信息
+            val allNetWorks = cManager.allNetworks
+
+            if (allNetWorks.isNotEmpty()) {
+                outside@ allNetWorks.forEach {
+                    val info = cManager.getNetworkInfo(it)
+                    if (null != info && info.isConnected) {
+                        MMKV.defaultMMKV().encode(Constants.KEY_NETWORK_STATE, true)
+                        listener.onAvailable(info)
+                        return@outside
+                    } else {
+                        MMKV.defaultMMKV().encode(Constants.KEY_NETWORK_STATE, false)
+                        listener.onLost()
+                    }
                 }
+            } else {
+                MMKV.defaultMMKV().encode(Constants.KEY_NETWORK_STATE, false)
+                listener.onLost()
             }
-        } else {
-            MMKV.defaultMMKV().encode(Constants.KEY_NETWORK_STATE, false)
-            listener.onLost()
         }
     }
 }

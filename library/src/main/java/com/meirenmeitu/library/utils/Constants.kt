@@ -8,6 +8,11 @@ package com.meirenmeitu.library.utils
  */
 object Constants {
 
+    const val CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE"
+    const val WIFI_STATE_CHANGED = "android.net.wifi.WIFI_STATE_CHANGED"
+    const val STATE_CHANGE = "android.net.wifi.STATE_CHANGE"
+
+
     /**
      * 服务器地址
      */

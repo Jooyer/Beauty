@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentActivity
 import com.meirenmeitu.library.rxbind.RxView
 import com.meirenmeitu.ui.R
 import com.meirenmeitu.ui.state.OnRetryListener
+import com.meirenmeitu.ui.state.StatusManager
 import io.reactivex.disposables.CompositeDisposable
 
 

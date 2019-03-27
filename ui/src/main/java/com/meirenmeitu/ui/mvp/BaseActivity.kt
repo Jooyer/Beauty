@@ -10,6 +10,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import ccom.meirenmeitu.ui.network.OnNetWorkListener
 import com.meirenmeitu.library.rxbind.RxView
+import com.meirenmeitu.library.utils.Constants
 import com.meirenmeitu.library.utils.StatusBarUtil
 import com.meirenmeitu.ui.R
 import com.meirenmeitu.ui.network.NetWorkReceiver
@@ -25,9 +26,6 @@ import io.reactivex.disposables.CompositeDisposable
  */
 abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     BaseView, OnRetryListener, RxView.Action1<View>, OnNetWorkListener {
-    private val CONNECTIVITY_CHANGE = "android.net.conn.CONNECTIVITY_CHANGE"
-    private val WIFI_STATE_CHANGED = "android.net.wifi.WIFI_STATE_CHANGED"
-    private val STATE_CHANGE = "android.net.wifi.STATE_CHANGE"
 
     /**
      *  装载 RxBus,防止内存泄漏
@@ -89,9 +87,9 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     private fun registerNetWorkReceiver() {
         mNetWorkReceiver = NetWorkReceiver(this)
         val filter = IntentFilter()
-        filter.addAction(CONNECTIVITY_CHANGE)
-        filter.addAction(WIFI_STATE_CHANGED)
-        filter.addAction(STATE_CHANGE)
+        filter.addAction(Constants.CONNECTIVITY_CHANGE)
+        filter.addAction(Constants.WIFI_STATE_CHANGED)
+        filter.addAction(Constants.STATE_CHANGE)
         registerReceiver(mNetWorkReceiver, filter)
     }
 
