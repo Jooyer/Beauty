@@ -17,6 +17,7 @@ import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.presenter.ADPresenter
 import com.meirenmeitu.library.utils.FileUtil
 import com.meirenmeitu.library.utils.MD5Utils
+import com.meirenmeitu.net.utils.CommUtil
 import com.meirenmeitu.ui.mvp.BaseActivity
 import com.yanzhenjie.permission.AndPermission
 import kotlinx.android.synthetic.main.activity_ad.*
@@ -72,8 +73,10 @@ class ADActivity : BaseActivity<ADPresenter>() {
                 .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                 .onGranted {
+                    println("==============网络状态: ${CommUtil.isNetWorkAvailable()}")
 //                    showAD()  // TODO 临时注释
-
+                    // 将分享的 image 保存到 SD卡
+                    FileUtil.drawableToFile(ContextCompat.getDrawable(this@ADActivity, R.mipmap.ic_share_logo)!! as BitmapDrawable, FileUtil.SHARE_MOLUE)
                     Looper.myQueue().addIdleHandler {
                         gotoNexts()
                         false // false 只回调一次
@@ -86,8 +89,6 @@ class ADActivity : BaseActivity<ADPresenter>() {
                     localIntent.data = Uri.fromParts("package", packageName, null)
                     startActivity(localIntent)
                 }.start()
-        // 将分享的 image 保存到 SD卡
-        FileUtil.drawableToFile(ContextCompat.getDrawable(this@ADActivity, R.mipmap.ic_share_logo)!! as BitmapDrawable, FileUtil.SHARE_MOLUE)
 
 
 //        mInterAd = InterstitialAd(this@ADActivity, adPlaceId)
@@ -117,7 +118,6 @@ class ADActivity : BaseActivity<ADPresenter>() {
 //
 //        mInterAd.loadAd()
 
-
     }
 
     override fun bindEvent() {
@@ -126,11 +126,13 @@ class ADActivity : BaseActivity<ADPresenter>() {
 
 
     private fun showAD() {
-        AdSettings.setSupportHttps(true)
-        val adPlaceId = "2058622"
-        SplashAd(this@ADActivity, ll_ad_container_ad, AdListener(), adPlaceId, true)
-        // TODO 定位功能暂时不用
+        if (CommUtil.isNetWorkAvailable()){ // 网络正常
+            AdSettings.setSupportHttps(true)
+            val adPlaceId = "2058622"
+            SplashAd(this@ADActivity, ll_ad_container_ad, AdListener(), adPlaceId, true)
+            // TODO 定位功能暂时不用
 //        LocationUtil.locate(this)
+        }
     }
 
 

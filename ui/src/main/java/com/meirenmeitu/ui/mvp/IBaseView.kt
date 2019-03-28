@@ -8,7 +8,10 @@ package com.meirenmeitu.ui.mvp
  */
 interface IBaseView {
 
-    fun showData(data: Any?)
+    fun showLoading()
 
-    fun showError(e:Any?)
+    fun showError(message: String)
+
+    fun closeLoading()
+
 }

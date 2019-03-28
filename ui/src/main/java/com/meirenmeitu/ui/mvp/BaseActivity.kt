@@ -8,12 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import ccom.meirenmeitu.ui.network.OnNetWorkListener
+import ccom.meirenmeitu.ui.network.NetStateChangeObserver
 import com.meirenmeitu.library.rxbind.RxView
 import com.meirenmeitu.library.utils.Constants
 import com.meirenmeitu.library.utils.StatusBarUtil
 import com.meirenmeitu.ui.R
-import com.meirenmeitu.ui.network.NetWorkReceiver
+import com.meirenmeitu.net.network.NetWorkReceiver
+import com.meirenmeitu.net.network.NetworkType
 import com.meirenmeitu.ui.state.OnRetryListener
 import com.meirenmeitu.ui.state.StatusManager
 import io.reactivex.disposables.CompositeDisposable
@@ -25,16 +26,12 @@ import io.reactivex.disposables.CompositeDisposable
  * Time: 12:49
  */
 abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
-    BaseView, OnRetryListener, RxView.Action1<View>, OnNetWorkListener {
+    BaseView, OnRetryListener, RxView.Action1<View>, NetStateChangeObserver {
 
     /**
      *  装载 RxBus,防止内存泄漏
      */
     val mCompositeDisposable = CompositeDisposable()
-    /**
-     * 网络监听广播
-     */
-    private lateinit var mNetWorkReceiver: NetWorkReceiver
 
     /**
      * 页面显示加载中,加载失败等管理器
@@ -51,16 +48,52 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
         mPresenter = createPresenter()
         lifecycle.addObserver(mPresenter)
 
+        // 注册网络变化广播
+        NetWorkReceiver.INSTANCE.registerReceiver(this)
+
         if (useStartAnim()) {
             overridePendingTransition(R.anim.act_bottom_in, R.anim.act_bottom_out)
         }
-        registerNetWorkReceiver()
+
         if (0 != getLayoutId()) {
             setContentView(initStatusManager(savedInstanceState))
         }
         setLogic()
         bindEvent()
     }
+
+    /**
+     * 初始化状态管理器
+     */
+    private fun initStatusManager(savedInstanceState: Bundle?): View {
+        if (0 != getLayoutId()) {
+            val contentView = LayoutInflater.from(this)
+                .inflate(getLayoutId(), null)
+            initializedViews(savedInstanceState, contentView)
+            return if (useStatusManager()) {
+                initialized(contentView)
+            } else {
+                contentView.visibility = View.VISIBLE
+                contentView
+            }
+        }
+        throw IllegalStateException("getLayoutId() 必须调用,且返回正常的布局ID")
+    }
+
+    private fun initialized(contentView: View): View {
+        mStatusManager = StatusManager.newBuilder(this)
+            .contentView(contentView)
+            .loadingView(getLoadingViewLayoutId())
+            .emptyDataView(getLoadingViewLayoutId())
+            .netWorkErrorView(getLoadingViewLayoutId())
+            .errorView(getLoadingViewLayoutId())
+            .retryViewId(R.id.tv_retry_load_data)
+            .onRetryListener(this)
+            .build()
+        mStatusManager?.showLoading()
+        return mStatusManager?.getRootLayout()!!
+    }
+
 
     /**
      * 是否 fitsSystemWindows, 即在顶部加入一个padding,默认不加入
@@ -76,26 +109,28 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
         return true
     }
 
+    override fun onResume() {
+        super.onResume()
+        // 添加网络变化观察者
+        NetWorkReceiver.INSTANCE.registerObserver(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // 移除网络变化观察者
+        NetWorkReceiver.INSTANCE.unRegisterObserver(this)
+    }
+
+
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.act_bottom_in, R.anim.act_bottom_out)
     }
 
-    /**
-     * 注册网络变化的广播
-     */
-    private fun registerNetWorkReceiver() {
-        mNetWorkReceiver = NetWorkReceiver(this)
-        val filter = IntentFilter()
-        filter.addAction(Constants.CONNECTIVITY_CHANGE)
-        filter.addAction(Constants.WIFI_STATE_CHANGED)
-        filter.addAction(Constants.STATE_CHANGE)
-        registerReceiver(mNetWorkReceiver, filter)
-    }
-
     override fun onDestroy() {
+        // 注消网络变化广播
+        NetWorkReceiver.INSTANCE.unRegisterReceiver(this)
         super.onDestroy()
-        unregisterReceiver(mNetWorkReceiver)
         RxView.disposeBindClick()
         mCompositeDisposable.dispose()
         //结束并移除任务列表
@@ -146,48 +181,23 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     }
 
     /**
-     * 初始化状态管理器
+     *  显示加载Loading
      */
-    private fun initStatusManager(savedInstanceState: Bundle?): View {
-        if (0 != getLayoutId()) {
-            val contentView = LayoutInflater.from(this)
-                .inflate(getLayoutId(), null)
-            initializedViews(savedInstanceState, contentView)
-            return if (useStatusManager()) {
-                initialized(contentView)
-            } else {
-                contentView.visibility = View.VISIBLE
-                contentView
-            }
-        }
-        throw IllegalStateException("getLayoutId() 必须调用,且返回正常的布局ID")
-    }
-
-    private fun initialized(contentView: View): View {
-        mStatusManager = StatusManager.newBuilder(this)
-            .contentView(contentView)
-            .loadingView(getLoadingViewLayoutId())
-            .emptyDataView(getLoadingViewLayoutId())
-            .netWorkErrorView(getLoadingViewLayoutId())
-            .errorView(getLoadingViewLayoutId())
-            .retryViewId(R.id.tv_retry_load_data)
-            .onRetryListener(this)
-            .build()
-        mStatusManager?.showLoading()
-        return mStatusManager?.getRootLayout()!!
-    }
-
-    /**
-     *  展示数据
-     */
-    override fun showData(data: Any?) {
+    override fun showLoading() {
 
     }
 
     /**
-     * 错误提示
+     * 显示错误信息
      */
-    override fun showError(e: Any?) {
+    override fun showError(message: String) {
+
+    }
+
+    /**
+     * 关闭显示Loading
+     */
+    override fun closeLoading() {
 
     }
 
@@ -201,14 +211,14 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     /**
      * 网络正常
      */
-    override fun onAvailable(info: NetworkInfo) {
+    override fun onNetConnected(info: NetworkType) {
 
     }
 
     /**
      * 无网
      */
-    override fun onLost() {
+    override fun onNetDisconnected() {
 
     }
 

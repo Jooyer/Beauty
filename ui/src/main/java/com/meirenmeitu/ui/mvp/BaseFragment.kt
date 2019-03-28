@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import ccom.meirenmeitu.ui.network.NetStateChangeObserver
 import com.meirenmeitu.library.rxbind.RxView
+import com.meirenmeitu.net.network.NetworkType
 import com.meirenmeitu.ui.R
 import com.meirenmeitu.ui.state.OnRetryListener
 import com.meirenmeitu.ui.state.StatusManager
@@ -20,7 +22,8 @@ import io.reactivex.disposables.CompositeDisposable
  * Date: 2018-07-30
  * Time: 11:16
  */
-abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.Action1<View>, OnRetryListener {
+abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.Action1<View>, OnRetryListener,
+    NetStateChangeObserver {
     val mCompositeDisposable = CompositeDisposable()
     lateinit var mPresenter: T
 
@@ -371,16 +374,38 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
     }
 
     /**
-     *  展示数据
+     *  显示加载Loading
      */
-    override fun showData(data: Any?) {
+    override fun showLoading() {
 
     }
 
     /**
-     * 错误提示
+     * 显示错误信息
      */
-    override fun showError(e: Any?) {
+    override fun showError(message: String) {
+
+    }
+
+    /**
+     * 关闭显示Loading
+     */
+    override fun closeLoading() {
+
+    }
+
+
+    /**
+     * 网络正常
+     */
+    override fun onNetConnected(info: NetworkType) {
+
+    }
+
+    /**
+     * 无网
+     */
+    override fun onNetDisconnected() {
 
     }
 

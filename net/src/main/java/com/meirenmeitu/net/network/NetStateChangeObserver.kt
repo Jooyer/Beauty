@@ -1,6 +1,6 @@
 package ccom.meirenmeitu.ui.network
 
-import android.net.NetworkInfo
+import com.meirenmeitu.net.network.NetworkType
 
 /**
  * Desc: 网络异常的回调
@@ -8,7 +8,7 @@ import android.net.NetworkInfo
  * Date: 2018-08-03
  * Time: 17:30
  */
-interface OnNetWorkListener {
+interface NetStateChangeObserver {
     /**
      * @param info --> 可以获取更多信息
      * info.getType()
@@ -21,7 +21,7 @@ interface OnNetWorkListener {
      * ----->  == TelephonyManager.NETWORK_TYPE_GPRS || TelephonyManager.NETWORK_TYPE_EDGE (两者为移动/联通2G)
      * TelephonyManager.NETWORK_TYPE_CDMA (电信2G)
      */
-     fun onAvailable(info: NetworkInfo)
+     fun onNetConnected(info: NetworkType)
 
-     fun onLost()
+     fun onNetDisconnected()
 }
