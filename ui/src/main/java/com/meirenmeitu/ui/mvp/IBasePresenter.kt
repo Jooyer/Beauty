@@ -22,6 +22,9 @@ interface IBasePresenter : LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun onResume(provider: LifecycleOwner)
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPause(provider: LifecycleOwner)
+
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy(provider: LifecycleOwner)
 

@@ -16,10 +16,7 @@ import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.bean.ImageBean
 import com.meirenmeitu.beauty.presenter.CategoryPresenter
 import com.meirenmeitu.library.dragview.OnDataListener
-import com.meirenmeitu.library.utils.Constants
-import com.meirenmeitu.library.utils.DensityUtils
-import com.meirenmeitu.library.utils.ImageLoader
-import com.meirenmeitu.library.utils.StatusBarUtil
+import com.meirenmeitu.library.utils.*
 import com.meirenmeitu.ui.mvp.BaseFragment
 import com.tencent.mmkv.MMKV
 import kotlinx.android.synthetic.main.fragment_category.*
@@ -104,6 +101,7 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
     override fun createPresenter() = CategoryPresenter(this)
 
     override fun getLayoutId() = R.layout.fragment_category
+
     override fun setLogic() {
 //        val random = Random()
 //        val color = Color.rgb(
@@ -113,11 +111,14 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 //        )
 //        rv_root_category.setBackgroundColor(color)
 
-        rv_root_category.postDelayed({
-            setAdapter()
-        },400)
+//        rv_root_category.postDelayed({
+//            setAdapter()
+//        },400)
     }
 
+    override fun onFirstUserVisible() {
+        setAdapter()
+    }
 
     private fun setAdapter() {
 
@@ -162,9 +163,6 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         rv_root_category.adapter = adapter
     }
 
-    override fun bindEvent() {
-    }
-
     // https://www.jianshu.com/p/bf2e6e5a3ba0
     fun openPreview( position: Int) {
         PreviewActivity.startPreviewActivity(mActivity, position, object : OnDataListener {
@@ -196,6 +194,7 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
             override fun init() {
             }
         })
+
 
 //        DragViewActivity.startActivity(mActivity, 0, object : OnDataListener {
 //            override fun getListView(): ArrayList<View> {
@@ -229,4 +228,14 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 //
 //        })
     }
+
+    override fun showError(message: String) {
+        JSnackBar.Builder().attachView(cl_container_category)
+            .message("message")
+            .default()
+            .build()
+            .default()
+            .show()
+    }
+
 }

@@ -26,7 +26,7 @@ import io.reactivex.disposables.CompositeDisposable
  * Time: 12:49
  */
 abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
-    BaseView, OnRetryListener, RxView.Action1<View>, NetStateChangeObserver {
+    BaseView, OnRetryListener, RxView.Action1<View> {
 
     /**
      *  装载 RxBus,防止内存泄漏
@@ -39,7 +39,6 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     var mStatusManager: StatusManager? = null
 
     lateinit var mPresenter: T
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         StatusBarUtil.transparentStatusBar(this, needUseImmersive())
@@ -58,6 +57,10 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
         if (0 != getLayoutId()) {
             setContentView(initStatusManager(savedInstanceState))
         }
+
+    }
+
+    override fun onAttachedToWindow() {
         setLogic()
         bindEvent()
     }
@@ -108,19 +111,6 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     open fun useStartAnim(): Boolean {
         return true
     }
-
-    override fun onResume() {
-        super.onResume()
-        // 添加网络变化观察者
-        NetWorkReceiver.INSTANCE.registerObserver(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // 移除网络变化观察者
-        NetWorkReceiver.INSTANCE.unRegisterObserver(this)
-    }
-
 
     override fun finish() {
         super.finish()
@@ -209,38 +199,24 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     }
 
     /**
-     * 网络正常
-     */
-    override fun onNetConnected(info: NetworkType) {
-
-    }
-
-    /**
-     * 无网
-     */
-    override fun onNetDisconnected() {
-
-    }
-
-    /**
      * 返回加载中布局ID
      */
-    fun getLoadingViewLayoutId() = R.layout.widget_loading_page
+    open fun getLoadingViewLayoutId() = R.layout.widget_loading_page
 
     /**
      * 返回空视图布局ID
      */
-    fun getEmptyDataViewLayoutId() = R.layout.widget_empty_page
+    open fun getEmptyDataViewLayoutId() = R.layout.widget_empty_page
 
     /**
      * 返回网路异常布局ID
      */
-    fun getNetWorkErrorViewLayoutId() = R.layout.widget_nonetwork_page
+    open fun getNetWorkErrorViewLayoutId() = R.layout.widget_nonetwork_page
 
     /**
      * 返回错误/其他异常布局ID
      */
-    fun getErrorViewLayoutId() = R.layout.widget_error_page
+    open fun getErrorViewLayoutId() = R.layout.widget_error_page
 
     // 延迟 finish(),默认500 ms
     fun delayFinish() {

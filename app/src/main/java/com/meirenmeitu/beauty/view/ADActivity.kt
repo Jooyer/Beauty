@@ -17,7 +17,7 @@ import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.presenter.ADPresenter
 import com.meirenmeitu.library.utils.FileUtil
 import com.meirenmeitu.library.utils.MD5Utils
-import com.meirenmeitu.net.utils.CommUtil
+import com.meirenmeitu.net.utils.NetUtil
 import com.meirenmeitu.ui.mvp.BaseActivity
 import com.yanzhenjie.permission.AndPermission
 import kotlinx.android.synthetic.main.activity_ad.*
@@ -67,20 +67,19 @@ class ADActivity : BaseActivity<ADPresenter>() {
     }
 
     override fun setLogic() {
-
         AndPermission.with(this)
                 .runtime()
                 .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                 .onGranted {
-                    println("==============网络状态: ${CommUtil.isNetWorkAvailable()}")
-//                    showAD()  // TODO 临时注释
+                    showAD()  // TODO 临时注释
                     // 将分享的 image 保存到 SD卡
-                    FileUtil.drawableToFile(ContextCompat.getDrawable(this@ADActivity, R.mipmap.ic_share_logo)!! as BitmapDrawable, FileUtil.SHARE_MOLUE)
-                    Looper.myQueue().addIdleHandler {
-                        gotoNexts()
-                        false // false 只回调一次
-                    }
+                    FileUtil.drawableToFile(ContextCompat.getDrawable(this@ADActivity, R.mipmap.ic_share_logo)!!
+                            as BitmapDrawable, FileUtil.SHARE_MOLUE)
+
+//                    Looper.myQueue().addIdleHandler {
+//                        false // false 只回调一次
+//                    }
                 }.onDenied {
                     //TODO 给一个弹窗,然后用户点击设置去设置界面, 回来检查权限是否给了
                     val localIntent = Intent()
@@ -126,12 +125,17 @@ class ADActivity : BaseActivity<ADPresenter>() {
 
 
     private fun showAD() {
-        if (CommUtil.isNetWorkAvailable()){ // 网络正常
+        println("showAD=============" + NetUtil.isNetWorkAvailable())
+        if (NetUtil.isNetWorkAvailable()){ // 网络正常
+            println("showAD=============2")
             AdSettings.setSupportHttps(true)
             val adPlaceId = "2058622"
             SplashAd(this@ADActivity, ll_ad_container_ad, AdListener(), adPlaceId, true)
             // TODO 定位功能暂时不用
 //        LocationUtil.locate(this)
+        }else{
+            println("showAD=============3")
+            gotoNexts()
         }
     }
 

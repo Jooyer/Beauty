@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import ccom.meirenmeitu.ui.network.NetStateChangeObserver
 import com.meirenmeitu.library.rxbind.RxView
+import com.meirenmeitu.net.network.NetWorkReceiver
 import com.meirenmeitu.net.network.NetworkType
 import com.meirenmeitu.ui.R
 import com.meirenmeitu.ui.state.OnRetryListener
@@ -22,8 +23,7 @@ import io.reactivex.disposables.CompositeDisposable
  * Date: 2018-07-30
  * Time: 11:16
  */
-abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.Action1<View>, OnRetryListener,
-    NetStateChangeObserver {
+abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.Action1<View>, OnRetryListener {
     val mCompositeDisposable = CompositeDisposable()
     lateinit var mPresenter: T
 
@@ -171,14 +171,14 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
         }
     }
 
-    /**
+    /** 暂时没有使用
      * 设置是否使用 View 的复用
      * View 的复用是指: 在 ViewPager 销毁和<重>建 Fragment 时会不断调用
      * onCreateView() -> onDestroyView() 之间的生命函数,这样可能会出现重复
      * 创建 View 的情况,导致界面上显示多个相同的 Fragment ,
      * View 的复用其实就是保存第一次创建的 View,后面在调用 onCreateView()
      * 时直接返回第一次创建的 View
-    </重> */
+     */
     private fun setReuseView(reuseView: Boolean) {
         isReuseView = reuseView
     }
@@ -266,7 +266,9 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
     /**
      * 绑定监听
      */
-    abstract fun bindEvent()
+    open fun bindEvent() {
+
+    }
 
     // 保存临时数据
     private fun saveState(): Bundle {
@@ -276,12 +278,12 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
     }
 
     // 重写保存数据
-    fun onSaveState(bundle: Bundle) {
+    open fun onSaveState(bundle: Bundle) {
 
     }
 
     // 重写取出数据
-    fun onRestoreState(stateSave: Bundle?) {
+    open fun onRestoreState(stateSave: Bundle?) {
 
     }
 
@@ -394,41 +396,25 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
 
     }
 
-
-    /**
-     * 网络正常
-     */
-    override fun onNetConnected(info: NetworkType) {
-
-    }
-
-    /**
-     * 无网
-     */
-    override fun onNetDisconnected() {
-
-    }
-
     /**
      * 返回加载中布局ID
      */
-    fun getLoadingViewLayoutId() = R.layout.widget_loading_page
+    open fun getLoadingViewLayoutId() = R.layout.widget_loading_page
 
     /**
      * 返回空视图布局ID
      */
-    fun getEmptyDataViewLayoutId() = R.layout.widget_empty_page
+    open fun getEmptyDataViewLayoutId() = R.layout.widget_empty_page
 
     /**
      * 返回网路异常布局ID
      */
-    fun getNetWorkErrorViewLayoutId() = R.layout.widget_nonetwork_page
+    open fun getNetWorkErrorViewLayoutId() = R.layout.widget_nonetwork_page
 
     /**
      * 返回错误/其他异常布局ID
      */
-    fun getErrorViewLayoutId() = R.layout.widget_error_page
-
+    open fun getErrorViewLayoutId() = R.layout.widget_error_page
 
 
 }

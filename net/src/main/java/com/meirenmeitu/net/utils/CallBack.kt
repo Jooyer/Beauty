@@ -7,9 +7,9 @@ package com.meirenmeitu.net.utils
  * Time: 11:49
  */
 interface CallBack<T> {
-    fun callback(data: T?)
+    fun callback(data: T)
 
-    fun callError(code: Int = 0, msg: String?) {
+    fun callError(code: Int = 0, msg: String) {
 
     }
 

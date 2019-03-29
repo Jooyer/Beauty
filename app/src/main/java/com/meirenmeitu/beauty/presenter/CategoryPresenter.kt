@@ -15,15 +15,25 @@ import com.meirenmeitu.ui.mvp.BasePresenter
  * @Copyright 2018 www.scshuimukeji.cn Inc. All rights reserved.
  * 注意: 本内容仅限于四川水木科技有限公司内部传阅，禁止外泄以及用于其他的商业目的
  */
-class CategoryPresenter(view:CategoryFragment): BasePresenter<CategoryFragment, CategoryModel>(view,CategoryModel()) {
+class CategoryPresenter(view: CategoryFragment) :
+    BasePresenter<CategoryFragment, CategoryModel>(view, CategoryModel()) {
+    private val GET_IMAGE_TAG = "GET_IMAGE_TAG"
 
-
-    fun getImages(type:Int){
-        mModel.getImages(type,object : CallBack<List<ImageBean>> {
-            override fun callback(data: List<ImageBean>?) {
+    fun getImages(type: Int) {
+        mModel.getImages(GET_IMAGE_TAG, type, object : CallBack<List<ImageBean>> {
+            override fun callback(data: List<ImageBean>) {
 
             }
         })
+    }
+
+    override fun onNetDisconnected() {
+        mModel.mRequestList[GET_IMAGE_TAG]?.let {
+            if (!it.isDisposed) {
+                it.dispose()
+                mView.showError("网络加载失败...")
+            }
+        }
     }
 
 }

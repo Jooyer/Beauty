@@ -98,6 +98,7 @@ class NetWorkReceiver : BroadcastReceiver() {
      */
     private fun notifyObservers(networkType: NetworkType) {
         if (mType == networkType) {
+            MMKV.defaultMMKV().encode(Constants.KEY_NETWORK_STATE,networkType != NetworkType.NETWORK_NO)
             return
         }
         mType = networkType

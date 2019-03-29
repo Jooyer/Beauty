@@ -19,6 +19,7 @@ import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.bean.LeftDrawerMenu
 import com.meirenmeitu.beauty.presenter.MainPresenter
 import com.meirenmeitu.library.utils.*
+import com.meirenmeitu.net.network.NetworkType
 import com.meirenmeitu.net.rxbus.RxBus
 import com.meirenmeitu.net.rxbus.RxCodeManager
 import com.meirenmeitu.net.rxbus.RxMessage
@@ -86,9 +87,23 @@ import java.util.*
  * https://github.com/ssseasonnn/RxRouter/blob/master/README.ch.md
  * Room
  * https://www.jianshu.com/p/463288377abe
+ * LiveDataBus
+ * https://www.jianshu.com/p/eb1d2b5b10dc
+ * 进度气泡
+ * https://www.jianshu.com/p/0009aadb31bb
+ * 拖拽会弹(还有一个缩放效果很棒)
+ * https://www.jianshu.com/p/600380d78779
+ * 底部导航动态替换
+ * https://www.jianshu.com/p/ff7b77f35b21
+ * 原生定位
+ * https://www.jianshu.com/p/d1b2bfb355dd
+ * BottomSheetBehavior
+ * https://www.jianshu.com/p/9cecfabd6118
  */
 class MainActivity : BaseActivity<MainPresenter>() {
     private var mUpdateDialog: JAlertDialog? = null
+
+
     override fun useStartAnim() = false
 
     override fun createPresenter(): MainPresenter {
@@ -119,7 +134,6 @@ class MainActivity : BaseActivity<MainPresenter>() {
     }
 
     override fun bindEvent() {
-
         // 打开抽屉
         mCompositeDisposable.add(RxBus.getDefault().register(
             RxMessage::class.java,
@@ -270,7 +284,6 @@ class MainActivity : BaseActivity<MainPresenter>() {
      */
     private fun showHomeFragment() {
         MMKV.defaultMMKV().encode(Constants.SCREEN_REAL_HEIGHT, ScreenUtils.getRealHeight(this))
-//        window.decorView.setBackgroundColor(Color.TRANSPARENT)
         showStatusBarAndNavigationBar()
         supportFragmentManager.beginTransaction()
 //            .setCustomAnimations(

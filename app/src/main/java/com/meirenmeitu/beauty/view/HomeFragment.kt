@@ -14,6 +14,7 @@ import com.meirenmeitu.library.rxbind.RxView
 import com.meirenmeitu.library.tablayout.TabLayout
 import com.meirenmeitu.library.utils.DensityUtils
 import com.meirenmeitu.library.utils.StatusBarUtil
+import com.meirenmeitu.net.network.NetworkType
 import com.meirenmeitu.net.rxbus.RxBus
 import com.meirenmeitu.net.rxbus.RxCodeManager
 import com.meirenmeitu.net.rxbus.RxMessage
@@ -71,7 +72,7 @@ class HomeFragment : BaseFragment<HomePresenter>() {
         navp_container_home.setSmoothScroll(false)
         val titles = Arrays.asList(*resources.getStringArray(R.array.home_category))
         val fragments = ArrayList<BaseFragment<*>>()
-        titles.forEach {
+        repeat(titles.size) {
             fragments.add(CategoryFragment.newInstance())
         }
 

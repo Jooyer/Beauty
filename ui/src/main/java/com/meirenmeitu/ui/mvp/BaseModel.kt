@@ -12,13 +12,13 @@ open class BaseModel : IBaseModel {
 
     // 如果想使用 AutoDispose 也可以的
     // https://www.jianshu.com/p/8993b247947a
-    val mRequestList = ArrayList<Disposable>()
+    val mRequestList = LinkedHashMap<String, Disposable>()
 
     override fun cancelAllRequests() {
-        mRequestList.forEach {
-            if (!it.isDisposed){
+        for ((_, value) in mRequestList) {
+            if (!value.isDisposed) {
                 println("cancelAllRequests==============")
-                it.dispose()
+                value.dispose()
             }
         }
     }

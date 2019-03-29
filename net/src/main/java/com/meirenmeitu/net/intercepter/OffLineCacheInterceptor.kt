@@ -1,6 +1,6 @@
 package com.meirenmeitu.net.intercepter
 
-import com.meirenmeitu.net.utils.CommUtil
+import com.meirenmeitu.net.utils.NetUtil
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -15,7 +15,7 @@ class OffLineCacheInterceptor : Interceptor {
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
-        if (!CommUtil.isNetWorkAvailable()) {
+        if (!NetUtil.isNetWorkAvailable()) {
             request = request.newBuilder()
                     .removeHeader("Pragma")  // https://stackoverflow.com/questions/42927216/retrofitokhttp-http-504-unsatisfiable-request-only-if-cached
                     //            .cacheControl(new CacheControl

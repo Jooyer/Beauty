@@ -12,7 +12,7 @@ import com.tencent.mmkv.MMKV
  * Date: 2018-07-31
  * Time: 11:07
  */
-object CommUtil {
+object NetUtil {
 
     /**
      * 判断网络是否正常连接
@@ -20,17 +20,7 @@ object CommUtil {
      * @return true --> 正常连接
      */
     fun isNetWorkAvailable(): Boolean {
-
         return  MMKV.defaultMMKV().decodeBool(Constants.KEY_NETWORK_STATE,true)
-
-//        val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-//        val info = manager.activeNetworkInfo
-//        if (null != info && info.isConnected) {
-//            if (info.state == NetworkInfo.State.CONNECTED) {
-//                return true
-//            }
-//        }
-//        return false
     }
 
     /**

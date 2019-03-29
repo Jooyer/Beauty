@@ -39,9 +39,6 @@ class MainFragment : BaseFragment<MainFPresenter>() {
 
     }
 
-    override fun bindEvent() {
-
-    }
 
     /**
      *  重置 Toolbar 高度

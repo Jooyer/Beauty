@@ -2,6 +2,9 @@ package com.meirenmeitu.ui.mvp
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import ccom.meirenmeitu.ui.network.NetStateChangeObserver
+import com.meirenmeitu.net.network.NetWorkReceiver
+import com.meirenmeitu.net.network.NetworkType
 
 
 /**
@@ -10,7 +13,7 @@ import androidx.lifecycle.LifecycleOwner
  * Date: 2018-07-24
  * Time: 13:46
  */
-abstract class BasePresenter<V : IBaseView, M : IBaseModel>(view: V,model:M) : IBasePresenter {
+abstract class BasePresenter<V : IBaseView, M : IBaseModel>(view: V,model:M) : IBasePresenter, NetStateChangeObserver {
     val TAG = BasePresenter::class.java.simpleName
     var mView: V = view
     protected var mModel = model
@@ -22,7 +25,16 @@ abstract class BasePresenter<V : IBaseView, M : IBaseModel>(view: V,model:M) : I
     }
 
     override fun onResume(provider: LifecycleOwner) {
+        // 添加网络变化观察者
+        NetWorkReceiver.INSTANCE.registerObserver(this)
 //        Log.i(TAG, "onResume===========${provider.lifecycle.currentState}")
+    }
+
+    override fun onPause(provider: LifecycleOwner) {
+        // 移除网络变化观察者
+        NetWorkReceiver.INSTANCE.unRegisterObserver(this)
+//        Log.i(TAG, "onPause===========${provider.lifecycle.currentState}")
+
     }
 
     override fun onDestroy(provider: LifecycleOwner) {
@@ -31,6 +43,20 @@ abstract class BasePresenter<V : IBaseView, M : IBaseModel>(view: V,model:M) : I
 
     override fun onLifecycleChanged(provider: LifecycleOwner, event: Lifecycle.Event) {
 //        Log.i(TAG, "onLifecycleChanged===========${provider.lifecycle.currentState}")
+    }
+
+    /**
+     * 网络正常
+     */
+    override fun onNetConnected(info: NetworkType) {
+//        println("BasePresenter===============onNetConnected " + info.name)
+    }
+
+    /**
+     * 无网
+     */
+    override fun onNetDisconnected() {
+//        println("BasePresenter===============onNetDisconnected")
     }
 
 }

@@ -5,6 +5,7 @@ import com.meirenmeitu.beauty.net.AppService
 import com.meirenmeitu.net.retrofit.RxRetrofit
 import com.meirenmeitu.net.utils.CallBack
 import com.meirenmeitu.ui.mvp.BaseModel
+import org.jetbrains.annotations.NotNull
 
 /**
  * @Project 晓可骑士.
@@ -15,15 +16,15 @@ import com.meirenmeitu.ui.mvp.BaseModel
  * @Copyright 2018 www.scshuimukeji.cn Inc. All rights reserved.
  * 注意: 本内容仅限于四川水木科技有限公司内部传阅，禁止外泄以及用于其他的商业目的
  */
-class CategoryModel() : BaseModel() {
+class CategoryModel : BaseModel() {
 
-    fun getImages(type:Int,callback: CallBack<List<ImageBean>>){
-        mRequestList.add(
-            RxRetrofit.instance.getApi(AppService::class.java)
+    fun getImages(@NotNull tag: String, type: Int, callback: CallBack<List<ImageBean>>) {
+        mRequestList[tag] = RxRetrofit.instance.getApi(AppService::class.java)
             .getImages(type)
             .compose(RxRetrofit.instance.maybeTransformer())
-            .subscribe({callback.callback(it)},
-                {callback.callError(msg = it.message)}))
+            .subscribe({ callback.callback(it) },
+                { callback.callError(msg = it.message ?: "") })
+
     }
 
 }
