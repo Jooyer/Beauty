@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Looper
+import android.util.Base64
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.baidu.mobads.AdSettings

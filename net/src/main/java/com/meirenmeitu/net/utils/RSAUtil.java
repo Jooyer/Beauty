@@ -1,12 +1,10 @@
 package com.meirenmeitu.net.utils;
 
-import java.security.KeyFactory;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
+import java.security.*;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
@@ -17,9 +15,12 @@ import javax.crypto.Cipher;
 /**
  * https://blog.csdn.net/HelloMoney_/article/details/52870977
  * https://blog.csdn.net/voidmain_123/article/details/78962357
+ * https://blog.csdn.net/jungle_pig/article/details/72621237
  * <p>
- * https://www.2cto.com/kf/201712/703948.html(这个讲解最为清晰)
+ *     https://blog.csdn.net/wangqiuyun/article/details/42143957(这个讲解最为清晰)
+ * https://www.2cto.com/kf/201712/703948.html
  * https://blog.csdn.net/ztx114/article/details/79236874 --> 获取秘钥对,得到结果和下面网站一样
+ * https://docs.open.alipay.com/291/105971 --> 秘钥对生成网站
  * http://web.chacuo.net/netrsakeypair --> 秘钥对生成网站
  * <p>
  * <p>
@@ -38,7 +39,7 @@ import javax.crypto.Cipher;
 public class RSAUtil {
 
     private static final String RSA = "RSA";// 非对称加密密钥算法
-    private static final String ECB_PKCS1_PADDING = "RSA/ECB/PKCS1Padding";//加密填充方式
+    private static final String ECB_PKCS1_PADDING = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";//加密填充方式
     // RSA密钥长度必须是64的倍数，在512~65536之间。默认是1024
     public static final int DEFAULT_KEY_SIZE = 2048;//秘钥默认长度
     private static final byte[] DEFAULT_SPLIT = "#PART#".getBytes();    // 当要加密的内容超过bufferSize，则采用partSplit进行分块加密
@@ -46,17 +47,22 @@ public class RSAUtil {
 
 
     /**
-     * 根据ecnodeRules规则生成RSA密钥对
+     * 一般密钥对服务器下发,或者在 Android 中本地保存公钥
+     * 根据 encodeRules 规则生成RSA密钥对
+     * keyLength 密钥长度，范围：512～2048,一般1024
      *
-     * @param keyLength 密钥长度，范围：512～2048
-     *                  一般1024
-     * @return
+     * @return 公钥私钥密钥对
      */
-    public static KeyPair generateRSAKeyPair(String encodeRules, int keyLength) {
+    public static KeyPair generateRSAKeyPair(String encodeRules) {
         try {
             KeyPairGenerator kpg = KeyPairGenerator.getInstance(RSA);
-            kpg.initialize(keyLength, new SecureRandom(encodeRules.getBytes()));
-            return kpg.genKeyPair();
+            kpg.initialize(2048, new SecureRandom(encodeRules.getBytes()));
+            KeyPair keyPair = kpg.genKeyPair();
+            // 公钥
+//            RSAPublicKey rsaPublicKey = (RSAPublicKey) keyPair.getPublic();
+            // 私钥
+//            RSAPrivateKey rsaPrivateCrtKey = (RSAPrivateKey) keyPair.getPrivate();
+            return keyPair;
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
             return null;
@@ -64,9 +70,36 @@ public class RSAUtil {
     }
 
     /**
-     * 用公钥对字符串进行加密
+     * RSA 数字签名
+     * 根据 encodeRules 规则生成RSA密钥对
      *
      * @param data 原文
+     * @return 签名后的内容
+     */
+    public static byte[] rsaSign(String encodeRules, String data) {
+        // 获取 RSA 密钥对
+        try {
+            KeyPair keyPair = generateRSAKeyPair(encodeRules);
+            PKCS8EncodedKeySpec pkcs8EncodedKeySpec = new PKCS8EncodedKeySpec(keyPair.getPrivate().getEncoded());
+            KeyFactory keyFactory = KeyFactory.getInstance(RSA);
+            PrivateKey privateKey = keyFactory.generatePrivate(pkcs8EncodedKeySpec);
+            Signature signature = Signature.getInstance("SHA256withRSA");
+            signature.initSign(privateKey);
+            signature.update(data.getBytes());
+            return signature.sign();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+
+    /**
+     * 用公钥对字符串进行加密
+     *
+     * @param data      原文
+     * @param publicKey --> RSA 公钥 ===> ((RSAPublicKey) keyPair.getPublic()).getEncoded()
      */
     public static byte[] encryptByPublicKey(byte[] data, byte[] publicKey) throws Exception {
         // 得到公钥
@@ -83,7 +116,7 @@ public class RSAUtil {
      * 私钥加密
      *
      * @param data       待加密数据
-     * @param privateKey 密钥
+     * @param privateKey --> RSA 私钥 ==> ((RSAPrivateKey) keyPair.getPrivate()).getEncoded()
      * @return byte[] 加密数据
      */
     public static byte[] encryptByPrivateKey(byte[] data, byte[] privateKey) throws Exception {
@@ -101,7 +134,7 @@ public class RSAUtil {
      * 公钥解密
      *
      * @param data      待解密数据
-     * @param publicKey 密钥
+     * @param publicKey --> RSA 公钥 ===> ((RSAPublicKey) keyPair.getPublic()).getEncoded()
      * @return byte[] 解密数据
      */
     public static byte[] decryptByPublicKey(byte[] data, byte[] publicKey) throws Exception {
@@ -117,6 +150,9 @@ public class RSAUtil {
 
     /**
      * 使用私钥进行解密
+     *
+     * @param encrypted  待解密数据
+     * @param privateKey --> RSA 私钥 ==> ((RSAPrivateKey) keyPair.getPrivate()).getEncoded()
      */
     public static byte[] decryptByPrivateKey(byte[] encrypted, byte[] privateKey) throws Exception {
         // 得到私钥
@@ -132,6 +168,8 @@ public class RSAUtil {
 
     /**
      * 用公钥对数据进行分段加密
+     *
+     * @param publicKey --> RSA 公钥 ===> ((RSAPublicKey) keyPair.getPublic()).getEncoded()
      */
     public static byte[] encryptByPublicKeyForSpilt(byte[] data, byte[] publicKey) throws Exception {
         int dataLen = data.length;
@@ -175,7 +213,7 @@ public class RSAUtil {
      * 用私钥对数据分段加密
      *
      * @param data       要加密的原始数据
-     * @param privateKey 秘钥
+     * @param privateKey --> RSA 私钥 ==> ((RSAPrivateKey) keyPair.getPrivate()).getEncoded()
      */
     public static byte[] encryptByPrivateKeyForSpilt(byte[] data, byte[] privateKey) throws Exception {
         int dataLen = data.length;

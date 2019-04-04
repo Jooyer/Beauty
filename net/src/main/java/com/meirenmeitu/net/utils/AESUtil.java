@@ -15,8 +15,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-/**
- * Desc:
+/** https://www.jianshu.com/u/b6913cfbd3ac
+ * Desc: AES 对称加密解密
  * Author: Jooyer
  * Date: 2018-11-12
  * Time: 10:01
@@ -31,17 +31,16 @@ public class AESUtil {
      * 生成密钥
      *
      * @param encodeRules 密钥生成规则
-     * @param keyLength   密钥长度
-     *                    return Base64编码返回密钥
+     *  return Base64编码返回密钥
      */
-    public static String generateSecretKey(String encodeRules, int keyLength) {
+    public static String generateSecretKey(String encodeRules) {
 
         try {
             //1.构造密钥生成器，指定为AES算法,不区分大小写
             KeyGenerator keygen = KeyGenerator.getInstance(AES);
             //2.根据ecnodeRules规则初始化密钥生成器
             //生成一个128位的随机源,根据传入的字节数组
-            keygen.init(keyLength, new SecureRandom(encodeRules.getBytes()));
+            keygen.init(256, new SecureRandom(encodeRules.getBytes()));
             //3.产生原始对称密钥
             SecretKey original_key = keygen.generateKey();
             //4.获得原始对称密钥的字节数组

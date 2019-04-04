@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-/**
+/** https://www.jianshu.com/p/94d055807538  --> Base64 工具类
  * Desc:
  * Author: Jooyer
  * Date: 2018-11-12

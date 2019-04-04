@@ -91,7 +91,7 @@ import java.util.*
  * https://www.jianshu.com/p/eb1d2b5b10dc
  * 进度气泡
  * https://www.jianshu.com/p/0009aadb31bb
- * 拖拽会弹(还有一个缩放效果很棒)
+ * 拖拽回弹(还有一个缩放效果很棒)
  * https://www.jianshu.com/p/600380d78779
  * 底部导航动态替换
  * https://www.jianshu.com/p/ff7b77f35b21

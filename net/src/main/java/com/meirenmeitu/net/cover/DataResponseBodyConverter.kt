@@ -21,6 +21,9 @@ class DataResponseBodyConverter<T>(private val adapter: TypeAdapter<T>, private 
     override fun convert(value: ResponseBody): T {
         try {
 
+            // @FIXME 可以约定,如果加密则返回字符串,反之返回 json
+
+
             // 如果返回数据有加密,需要用这个
 //            val bytes = value.bytes()
 //            //对字节数组进行解密操作
