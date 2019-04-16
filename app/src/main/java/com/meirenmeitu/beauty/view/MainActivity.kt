@@ -36,10 +36,11 @@ import java.util.*
  * @Author 刘一召
  * @Date  2019/2/11
  * @Time 17:47
- * @Desc https://www.jianshu.com/p/e87c0086a3ae (Fragment 之间共享)
- *     https://blog.csdn.net/qq402164452/article/details/73611233
- *   https://www.jianshu.com/p/af0905603be7
- *   https://blog.csdn.net/cyuyanshujujiegou/article/details/76514203?utm_source=blogxgwz2 (Fragment -> Activity)
+ * @Desc
+ *  https://www.jianshu.com/p/e87c0086a3ae (Fragment 之间共享)
+ *  https://blog.csdn.net/qq402164452/article/details/73611233
+ *  https://www.jianshu.com/p/af0905603be7
+ *  https://blog.csdn.net/cyuyanshujujiegou/article/details/76514203?utm_source=blogxgwz2 (Fragment -> Activity)
  *
  * 频道管理:
  *  https://www.jianshu.com/p/57324eb516df (腾讯)
@@ -72,7 +73,15 @@ import java.util.*
  *
  * https://blog.csdn.net/guiying712/article/details/78474177 --> ViewModel / LiveData / LifeCycle ...
  *
+ * https://www.jianshu.com/p/eb1d2b5b10dc?utm_campaign=haruki&utm_content=note&utm_medium=reader_share&utm_source=weixin  -->  LiveDataBus
+ *
  * https://blog.csdn.net/qq_31370269/article/details/50752211  --> xml 中使用 bitmap
+ *
+ * https://juejin.im/post/5bbdca89e51d450e92526a3b  (SDK埋点)
+ *
+ * https://www.jianshu.com/p/81c3503e4a0f (跳转应用商店)
+ *
+ * https://mp.weixin.qq.com/s/GNZRjG5A6IDu9n4n9wEZdg (app上架技巧)
  *
  *  //        val contentResolver = contentResolver
 // 注册什么样的 Uri, 在通知时使用相同的, 如 contentResolver.notifyChange(Uri.parse("content://cn.mulue.reader"),null)
@@ -90,7 +99,7 @@ import java.util.*
  * https://www.jianshu.com/p/eb1d2b5b10dc
  * 进度气泡
  * https://www.jianshu.com/p/0009aadb31bb
- * 拖拽会弹(还有一个缩放效果很棒)
+ * 拖拽回弹(还有一个缩放效果很棒)
  * https://www.jianshu.com/p/600380d78779
  * 底部导航动态替换
  * https://www.jianshu.com/p/ff7b77f35b21
@@ -205,17 +214,17 @@ class MainActivity : BaseActivity<MainPresenter>() {
                     when (position) {
                         0 -> { // 我的收藏
                             val intent = Intent(this@MainActivity, CollectActivity::class.java)
-                            intent.putExtra(Constants.KEY_DRAWER_TYPE,0)
+                            intent.putExtra(Constants.KEY_DRAWER_TYPE, 0)
                             startActivity(intent)
                         }
                         1 -> { // 我的下载
                             val intent = Intent(this@MainActivity, CollectActivity::class.java)
-                            intent.putExtra(Constants.KEY_DRAWER_TYPE,1)
+                            intent.putExtra(Constants.KEY_DRAWER_TYPE, 1)
                             startActivity(intent)
                         }
                         2 -> { // 最新欣赏
                             val intent = Intent(this@MainActivity, CollectActivity::class.java)
-                            intent.putExtra(Constants.KEY_DRAWER_TYPE,2)
+                            intent.putExtra(Constants.KEY_DRAWER_TYPE, 2)
                             startActivity(intent)
                         }
                         3 -> { // 分类管理
@@ -228,8 +237,10 @@ class MainActivity : BaseActivity<MainPresenter>() {
                             val installs = AppraiseUtils.getInstallAppMarkets(this@MainActivity)
                             val markets = AppraiseUtils.SelectedInstalledAPPs(this@MainActivity, installs)
                             if (!markets.isEmpty()) {
-                                AppraiseUtils.launchAppDetail(this@MainActivity.applicationContext,
-                                    packageName, markets[0])
+                                AppraiseUtils.launchAppDetail(
+                                    this@MainActivity.applicationContext,
+                                    packageName, markets[0]
+                                )
                             } else { // 应用商店网页版跳转
                                 val uri = Uri.parse("")
                                 val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -239,8 +250,10 @@ class MainActivity : BaseActivity<MainPresenter>() {
                         6 -> { // 版本更新
                             AndPermission.with(this@MainActivity)
                                 .runtime()
-                                .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                                .permission(
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                                )
                                 .onGranted {
                                     if (null == mUpdateDialog) { // 不需要更新
                                         JSnackBar.Builder().attachView(dl_contain_main)
@@ -258,7 +271,10 @@ class MainActivity : BaseActivity<MainPresenter>() {
                                 }.start()
                         }
                         7 -> { // 分享APP
-                            ShareUtil.originalShareImage(this@MainActivity, File(FileUtil.FILE_DIR, FileUtil.SHARE_MOLUE))
+                            ShareUtil.originalShareImage(
+                                this@MainActivity,
+                                File(FileUtil.FILE_DIR, FileUtil.SHARE_MOLUE)
+                            )
                         }
                     }
                 }, 250)

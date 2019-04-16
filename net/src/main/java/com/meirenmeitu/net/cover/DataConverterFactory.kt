@@ -41,20 +41,16 @@ class DataConverterFactory(private val gson: Gson) : Converter.Factory() {
         }
 
         return when (annotation){
-            null -> super.responseBodyConverter(type, annotations, retrofit) // JsonResponseBodyConverter(gson,adapter) --> 如果返回数据有加密,需要用这个
+            null -> super.responseBodyConverter(type, annotations, retrofit)
             else -> DataResponseBodyConverter(adapter,gson,annotation!!)
         }
 
     }
 
-    override fun requestBodyConverter(type: Type, parameterAnnotations: Array<out Annotation>, methodAnnotations: Array<out Annotation>, retrofit: Retrofit): Converter<*, RequestBody>? {
-        return super.requestBodyConverter(type, parameterAnnotations, methodAnnotations, retrofit)
-        /*
-            // 请求加密操作
-         val adapter = gson.getAdapter(TypeToken.get(type))
-        return JsonRequestBodyConverter(gson,adapter)
-
-         */
+    override fun requestBodyConverter(type: Type, parameterAnnotations: Array<out Annotation>,
+                                      methodAnnotations: Array<out Annotation>, retrofit: Retrofit): Converter<*, RequestBody>? {
+        val adapter = gson.getAdapter(TypeToken.get(type))
+        return DataRequestBodyConverter(adapter,gson)
     }
 
 

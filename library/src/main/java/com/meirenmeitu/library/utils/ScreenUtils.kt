@@ -3,6 +3,7 @@ package com.meirenmeitu.library.utils
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.Rect
 import android.view.*
@@ -80,16 +81,17 @@ object ScreenUtils {
      * @return
      */
     //获取虚拟按键的高度
-     fun getNavigationBarHeight(context: Activity): Int {
-        var result = 0
-        if (checkDeviceHasNavigationBar(context)) {
-            val res = context.resources
-            val resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android")
-            if (resourceId > 0) {
-                result = res.getDimensionPixelSize(resourceId)
-            }
+    fun getNavigationBarHeight(context: Activity): Int {
+        val hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey()
+        val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
+        if (!hasMenuKey && !hasBackKey) {
+            val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
+            //获取NavigationBar的高度
+            return context.resources.getDimensionPixelSize(resourceId)
+
+        } else {
+            return 0
         }
-        return result
     }
 
     fun getRealHeight(context: Activity): Int {

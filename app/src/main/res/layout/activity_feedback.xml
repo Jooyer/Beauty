@@ -54,5 +54,21 @@
             app:layout_constraintTop_toBottomOf="@+id/et_content_feedback"
     />
 
+    <Button
+            android:id="@+id/btn_submit_feedback2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_60"
+            android:layout_marginTop="@dimen/padding_20"
+            android:text="解密"
+            android:textColor="@color/color_write"
+            android:textSize="@dimen/text_size_16"
+            android:layout_marginStart="@dimen/padding_20"
+            android:layout_marginEnd="@dimen/padding_20"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_submit_feedback"
+    />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
