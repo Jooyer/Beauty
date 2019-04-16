@@ -1,7 +1,16 @@
 <resources>
 
-    <string name="loading">数据加载....&#8230;</string>
-    <string name="loaded_fail">数据加载失败,点击重试&#8230;</string>
-    <string name="no_more">没有更多数据&#8230;</string>
+    <string name="lib_loading">正在加载&#8230;</string>
+    <string name="lib_loaded_fail">数据加载失败,点击重试&#8230;</string>
+    <string name="lib_no_more">没有更多数据&#8230;</string>
+
+
+    <string name="lib_refresh_drag">下拉刷新</string>
+    <string name="lib_refresh_release">释放立即刷新</string>
+    <string name="lib_refreshing">正在刷新&#8230;</string>
+    <string name="lib_refresh_completed">刷新完成</string>
+
+    <string name="lib_load_more">加载更多</string>
+    <string name="lib_load_completed">加载完成</string>
 
 </resources>

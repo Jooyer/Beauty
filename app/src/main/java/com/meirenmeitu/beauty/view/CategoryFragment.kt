@@ -2,6 +2,9 @@ package com.meirenmeitu.beauty.view
 
 
 import android.graphics.Color
+import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.widget.ImageView
@@ -16,6 +19,11 @@ import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.bean.ImageBean
 import com.meirenmeitu.beauty.presenter.CategoryPresenter
 import com.meirenmeitu.library.dragview.OnDataListener
+import com.meirenmeitu.library.refresh.BounceCallBack
+import com.meirenmeitu.library.refresh.EventForwardingHelper
+import com.meirenmeitu.library.refresh.NormalBounceHandler
+import com.meirenmeitu.library.refresh.footer.DefaultFooter
+import com.meirenmeitu.library.refresh.header.DefaultHeader
 import com.meirenmeitu.library.utils.*
 import com.meirenmeitu.ui.mvp.BaseFragment
 import com.tencent.mmkv.MMKV
@@ -95,7 +103,13 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 
     companion object {
         val TAG = CategoryFragment::class.java.simpleName
-        fun newInstance() = CategoryFragment()
+        fun newInstance(type: Int): CategoryFragment {
+            val fragment = CategoryFragment()
+            val bundle = Bundle()
+            bundle.putInt(TAG, type)
+            fragment.arguments = bundle
+            return fragment
+        }
     }
 
     override fun createPresenter() = CategoryPresenter(this)
@@ -114,9 +128,36 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 //        rv_root_category.postDelayed({
 //            setAdapter()
 //        },400)
+
+        //设置滚动冲突的控制类
+        bl_container_category.setBounceHandler(NormalBounceHandler(), rv_root_category)
+        //设置刷新头，null意味着没有刷新头，不调用该函数意为着空
+        bl_container_category.setHeaderView(DefaultHeader(mActivity), cl_container_category)
+        bl_container_category.setFooterView(DefaultFooter(mActivity), cl_container_category)
+
+        //自定义事件分发处理
+        bl_container_category.setEventForwardingHelper(EventForwardingHelper { downX, downY, moveX, moveY ->
+            true
+        })
+
+        bl_container_category.setBounceCallBack(object : BounceCallBack {
+            //刷新回调
+            override fun startRefresh() {
+                Handler().postDelayed(Runnable {
+                    bl_container_category.setRefreshCompleted()
+                }, 2000)
+            }
+
+            override fun startLoadingMore() {
+                Handler().postDelayed(Runnable {
+                    bl_container_category.setLoadingMoreCompleted()
+                }, 2000)
+            }
+        })
     }
 
     override fun onFirstUserVisible() {
+        Log.e("Test", "=============== " + arguments?.getInt(TAG,-1))
         setAdapter()
     }
 
@@ -130,20 +171,21 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         rv_root_category.layoutManager = GridLayoutManager(mActivity, 2)
 
         rv_root_category.addItemDecoration(
-            NormalDecoration(mActivity,DensityUtils.dpToPx(3), Color.WHITE)
+            NormalDecoration(mActivity, DensityUtils.dpToPx(3), Color.WHITE)
         )
 
         val adapter = object : CommonAdapter<ImageBean>(mActivity, R.layout.item_image_category, mImages) {
             val statusBarHeight = StatusBarUtil.getStatusBarHeight(mActivity)
-//            val navigationBarHeight = ScreenUtils.getNavigationBarHeight(mActivity)
-            val height = (MMKV.defaultMMKV().decodeInt(Constants.SCREEN_REAL_HEIGHT,0)
-                    - DensityUtils.dpToPx(100) - statusBarHeight)/2
+            //            val navigationBarHeight = ScreenUtils.getNavigationBarHeight(mActivity)
+            val height = (MMKV.defaultMMKV().decodeInt(Constants.SCREEN_REAL_HEIGHT, 0)
+                    - DensityUtils.dpToPx(100) - statusBarHeight) / 2
+
             override fun convert(holder: ViewHolder, bean: ImageBean, position: Int) {
                 val imageView = holder.getView<ImageView>(R.id.iv_content_item_category)
                 val param = holder.itemView.layoutParams as RecyclerView.LayoutParams
                 if (0 >= height) {
                     param.height = 800
-                }else{
+                } else {
                     param.height = height
                 }
                 holder.itemView.layoutParams = param
@@ -164,7 +206,7 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
     }
 
     // https://www.jianshu.com/p/bf2e6e5a3ba0
-    fun openPreview( position: Int) {
+    fun openPreview(position: Int) {
         PreviewActivity.startPreviewActivity(mActivity, position, object : OnDataListener {
             override fun getListView(): java.util.ArrayList<View> {
                 return (0 until list_viewholder.size()).mapTo(ArrayList()) {

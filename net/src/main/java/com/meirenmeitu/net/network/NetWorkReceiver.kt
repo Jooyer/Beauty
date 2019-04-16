@@ -10,7 +10,13 @@ import com.meirenmeitu.net.retrofit.RxRetrofit
 import com.tencent.mmkv.MMKV
 
 
-/** http://blog.csdn.net/male09/article/details/70140558
+/**
+ *  新的网络监听方式
+ *  https://www.jianshu.com/p/e04aedd27b33
+ *  https://www.jianshu.com/p/86d347b2a12b
+ *
+ * 广播监听
+ * http://blog.csdn.net/male09/article/details/70140558
  * https://www.jianshu.com/p/e04aedd27b33
  * 需要权限:
  * <uses-permission android:name="android.permission.INTERNET"/>

@@ -73,7 +73,7 @@ class HomeFragment : BaseFragment<HomePresenter>() {
         val titles = Arrays.asList(*resources.getStringArray(R.array.home_category))
         val fragments = ArrayList<BaseFragment<*>>()
         repeat(titles.size) {
-            fragments.add(CategoryFragment.newInstance())
+            fragments.add(CategoryFragment.newInstance(it))
         }
 
         navp_container_home.adapter = TitleFragmentStateAdapter(childFragmentManager, fragments, titles)

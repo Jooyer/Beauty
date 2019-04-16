@@ -19,7 +19,6 @@ import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.bean.LeftDrawerMenu
 import com.meirenmeitu.beauty.presenter.MainPresenter
 import com.meirenmeitu.library.utils.*
-import com.meirenmeitu.net.network.NetworkType
 import com.meirenmeitu.net.rxbus.RxBus
 import com.meirenmeitu.net.rxbus.RxCodeManager
 import com.meirenmeitu.net.rxbus.RxMessage
@@ -297,7 +296,9 @@ class MainActivity : BaseActivity<MainPresenter>() {
 ////                R.anim.slide_right_out
 //            )
             .replace(R.id.ll_root_main, HomeFragment.newInstance(), HomeFragment.TAG)
-            .commit()
+            .commitNowAllowingStateLoss()
+        // 去掉背景色
+        window.setBackgroundDrawable(null)
     }
 
     // https://blog.csdn.net/qq_39249422/article/details/80410332
