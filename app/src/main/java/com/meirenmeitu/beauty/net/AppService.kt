@@ -23,7 +23,7 @@ interface AppService {
     @TypeData(successCode = 200, listKey = "data")
     @GET("image/category")
     fun getImages(
-        @Query("type") type: Int = 1,
+        @Query("type") type: Int = 0,
         @Query("page") page: Int = 1,
         @Query("size") size: Int = 20
     ): Maybe<List<ImageBean>>

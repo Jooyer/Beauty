@@ -9,6 +9,7 @@ import android.util.SparseArray
 import android.view.View
 import android.widget.ImageView
 import androidx.core.util.set
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.meirenmeitu.base.adapter.CommonAdapter
@@ -143,9 +144,9 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         bl_container_category.setBounceCallBack(object : BounceCallBack {
             //刷新回调
             override fun startRefresh() {
-                Handler().postDelayed(Runnable {
-                    bl_container_category.setRefreshCompleted()
-                }, 2000)
+                arguments?.getInt(TAG,0).let {
+                    mPresenter.getImages(it?:0)
+                }
             }
 
             override fun startLoadingMore() {
@@ -157,12 +158,17 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
     }
 
     override fun onFirstUserVisible() {
-        Log.e("Test", "=============== " + arguments?.getInt(TAG,-1))
         setAdapter()
+        bl_container_category.autoRefresh()
+        mPresenter.mImages.observe(this, Observer {
+            Log.e("Test", "=============== ")
+            mImages.clear()
+            mImages.addAll(it)
+            rv_root_category.adapter?.notifyDataSetChanged()
+        })
     }
 
     private fun setAdapter() {
-
         imageUrls.forEach { url ->
             mImages.add(ImageBean(url, "测试"))
             listfragemnt.add(PreviewFragment::class.java)
