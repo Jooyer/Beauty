@@ -18,13 +18,21 @@ import org.jetbrains.annotations.NotNull
  */
 class CategoryModel : BaseModel() {
 
-    fun getImages(@NotNull tag: String, type: Int, callback: CallBack<List<ImageBean>>) {
+    fun getSeries(@NotNull tag: String, type: Int, callback: CallBack<List<ImageBean>>) {
         mRequestList[tag] = RxRetrofit.instance.getApi(AppService::class.java)
-            .getImages(type)
+            .getSeries(type)
             .compose(RxRetrofit.instance.maybeTransformer())
             .subscribe({ callback.callback(it) },
                 { callback.callError(msg = it.message ?: "") })
 
+    }
+
+    fun getOneImageInSeries(@NotNull tag: String, imageId: String, imageCode: String, callback: CallBack<ImageBean>) {
+        mRequestList[tag] = RxRetrofit.instance.getApi(AppService::class.java)
+            .getOneImageInSeries(imageId, imageCode)
+            .compose(RxRetrofit.instance.maybeTransformer())
+            .subscribe({ callback.callback(it) },
+                { callback.callError(msg = it.message ?: "") })
     }
 
 }

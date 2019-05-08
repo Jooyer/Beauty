@@ -144,9 +144,12 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         bl_container_category.setBounceCallBack(object : BounceCallBack {
             //刷新回调
             override fun startRefresh() {
-                arguments?.getInt(TAG,0).let {
-                    mPresenter.getImages(it?:0)
-                }
+//                arguments?.getInt(TAG,0).let {
+//                    mPresenter.getSeries(it?:0)
+//                }
+
+                mPresenter.getOneImageInSeries("176eca57a37f4de8936c401d1b2afa42", "002")
+
             }
 
             override fun startLoadingMore() {
@@ -166,14 +169,19 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
             mImages.addAll(it)
             rv_root_category.adapter?.notifyDataSetChanged()
         })
+
+        mPresenter.mImage.observe(this, Observer {
+            Log.e("Test", "===============获取一张图 ")
+            mImages.clear()
+            mImages.add(it)
+            rv_root_category.adapter?.notifyDataSetChanged()
+            bl_container_category.setRefreshCompleted()
+        })
+
     }
 
     private fun setAdapter() {
-        imageUrls.forEach { url ->
-            mImages.add(ImageBean(url, "测试"))
-            listfragemnt.add(PreviewFragment::class.java)
-        }
-
+        listfragemnt.add(PreviewFragment::class.java)
         rv_root_category.layoutManager = GridLayoutManager(mActivity, 2)
 
         rv_root_category.addItemDecoration(
@@ -197,7 +205,7 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
                 holder.itemView.layoutParams = param
                 holder.itemView.tag = imageView
                 list_viewholder[position] = holder
-                ImageLoader.loadImgWithCenterCrop(imageView, bean.url)
+                ImageLoader.loadImgWithCenterCrop(imageView,Constants.BASE_URL.plus(bean.imageId).plus("/").plus(bean.imageUrl) )
             }
 
         }

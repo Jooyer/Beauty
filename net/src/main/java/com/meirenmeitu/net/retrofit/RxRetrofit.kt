@@ -3,7 +3,6 @@ package com.meirenmeitu.net.retrofit
 import android.content.Context
 import android.text.TextUtils
 import com.meirenmeitu.net.cover.DataConverterFactory
-import com.meirenmeitu.net.cover.LiveDataCallAdapterFactory
 import com.meirenmeitu.net.intercepter.LoggingInterceptor
 import com.meirenmeitu.net.intercepter.TokenInterceptor
 import com.meirenmeitu.net.utils.RetryWithDelay
@@ -173,7 +172,7 @@ class RxRetrofit private constructor() {
         mRetrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             // 转换器按添加顺序匹配
-            .addCallAdapterFactory(LiveDataCallAdapterFactory())
+//            .addCallAdapterFactory(LiveDataCallAdapterFactory())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(DataConverterFactory.create())
             .addConverterFactory(ScalarsConverterFactory.create())

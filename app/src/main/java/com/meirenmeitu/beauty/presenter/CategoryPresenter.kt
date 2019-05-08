@@ -18,24 +18,41 @@ import com.meirenmeitu.ui.mvp.BasePresenter
  */
 class CategoryPresenter(view: CategoryFragment) :
     BasePresenter<CategoryFragment, CategoryModel>(view, CategoryModel()) {
-    private val GET_IMAGE_TAG = "GET_IMAGE_TAG"
+    private val GET_SERIES_IMAGE_TAG = "GET_SERIES_IMAGE_TAG"
+    private val GET_IMAGE_OF_SERIES_TAG = "GET_IMAGE_OF_SERIES_TAG"
     val mImages = MutableLiveData<List<ImageBean>>()
+    val mImage = MutableLiveData<ImageBean>()
 
-    fun getImages(type: Int) {
-        mModel.getImages(GET_IMAGE_TAG, type, object : CallBack<List<ImageBean>> {
+    fun getSeries(type: Int) {
+        mModel.getSeries(GET_SERIES_IMAGE_TAG, type, object : CallBack<List<ImageBean>> {
             override fun callback(data: List<ImageBean>) {
                 mImages.value = data
             }
         })
     }
 
+    fun getOneImageInSeries(imageId: String, imageCode: String){
+        mModel.getOneImageInSeries(GET_IMAGE_OF_SERIES_TAG,imageId,imageCode,object :CallBack<ImageBean>{
+            override fun callback(data: ImageBean) {
+                mImage.value = data
+            }
+        })
+    }
+
     override fun onNetDisconnected() {
-        mModel.mRequestList[GET_IMAGE_TAG]?.let {
+        mModel.mRequestList[GET_SERIES_IMAGE_TAG]?.let {
             if (!it.isDisposed) {
                 it.dispose()
                 mView.showError("网络加载失败...")
             }
         }
+
+        mModel.mRequestList[GET_IMAGE_OF_SERIES_TAG]?.let {
+            if (!it.isDisposed){
+                it.dispose()
+            }
+        }
+
     }
 
 }

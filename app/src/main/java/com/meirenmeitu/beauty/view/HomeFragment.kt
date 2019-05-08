@@ -14,7 +14,6 @@ import com.meirenmeitu.library.rxbind.RxView
 import com.meirenmeitu.library.tablayout.TabLayout
 import com.meirenmeitu.library.utils.DensityUtils
 import com.meirenmeitu.library.utils.StatusBarUtil
-import com.meirenmeitu.net.network.NetworkType
 import com.meirenmeitu.net.rxbus.RxBus
 import com.meirenmeitu.net.rxbus.RxCodeManager
 import com.meirenmeitu.net.rxbus.RxMessage
@@ -23,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 import java.util.*
 
 
-/**
+/** https://github.com/H07000223/FlycoTabLayout
  * 主页界面
  */
 class HomeFragment : BaseFragment<HomePresenter>() {

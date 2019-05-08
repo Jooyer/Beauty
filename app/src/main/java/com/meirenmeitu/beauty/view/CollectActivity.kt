@@ -63,7 +63,7 @@ class CollectActivity : BaseActivity<CollectPresenter>() {
     private fun setAdapter() {
 
         imageUrls.forEach { url ->
-            mImages.add(ImageBean(url, "测试"))
+//            mImages.add(ImageBean(url, "测试"))
             listfragemnt.add(PreviewFragment::class.java)
         }
 
@@ -116,7 +116,8 @@ class CollectActivity : BaseActivity<CollectPresenter>() {
                 holder.itemView.layoutParams = param
                 holder.itemView.tag = imageView
                 list_viewholder[position] = holder
-                ImageLoader.loadImgWithCenterCrop(imageView, bean.url)
+                ImageLoader.loadImgWithCenterCrop(imageView,Constants.BASE_URL.plus(bean.imageId).plus("/").plus(bean.imageUrl) )
+
             }
 
         }
