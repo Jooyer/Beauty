@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.util.SparseArray
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.util.set
 import androidx.recyclerview.widget.GridLayoutManager
@@ -24,6 +25,7 @@ import com.meirenmeitu.library.utils.StatusBarUtil
 import com.meirenmeitu.ui.mvp.BaseActivity
 import com.tencent.mmkv.MMKV
 import kotlinx.android.synthetic.main.activity_collect.*
+import kotlinx.android.synthetic.main.fragment_category.*
 
 /**
  * 我的收藏
@@ -63,7 +65,7 @@ class CollectActivity : BaseActivity<CollectPresenter>() {
     private fun setAdapter() {
 
         imageUrls.forEach { url ->
-//            mImages.add(ImageBean(url, "测试"))
+//            mImages.add(Image(url, "测试"))
             listfragemnt.add(PreviewFragment::class.java)
         }
 
@@ -100,24 +102,26 @@ class CollectActivity : BaseActivity<CollectPresenter>() {
         )
 
         val adapter = object : CommonAdapter<ImageBean>(this, R.layout.item_image_category, mImages) {
-            val statusBarHeight = StatusBarUtil.getStatusBarHeight(this@CollectActivity)
-            //            val navigationBarHeight = ScreenUtils.getNavigationBarHeight(mActivity)
-            val height = (MMKV.defaultMMKV().decodeInt(Constants.SCREEN_REAL_HEIGHT, 0)
-                    - DensityUtils.dpToPx(100) - statusBarHeight) / 2
-
             override fun convert(holder: ViewHolder, bean: ImageBean, position: Int) {
                 val imageView = holder.getView<ImageView>(R.id.iv_content_item_category)
+                holder.getView<TextView>(R.id.tv_content_item_title).text = bean.imageName
+
+                val lp = imageView.layoutParams
+                lp.width = DensityUtils.getWindowSize(this@CollectActivity).widthPixels / 2 - DensityUtils.dpToPx(2)
+                lp.height = (lp.width / MMKV.defaultMMKV().decodeFloat(Constants.KEY_NETWORK_STATE,1.0F)).toInt()
+                imageView.layoutParams = lp
+
                 val param = holder.itemView.layoutParams as RecyclerView.LayoutParams
-                if (0 >= height) {
-                    param.height = 800
-                } else {
-                    param.height = height
-                }
+                param.height = lp.height + DensityUtils.dpToPx(45)
                 holder.itemView.layoutParams = param
+
                 holder.itemView.tag = imageView
                 list_viewholder[position] = holder
-                ImageLoader.loadImgWithCenterCrop(imageView,Constants.BASE_URL.plus(bean.imageId).plus("/").plus(bean.imageUrl) )
-
+                ImageLoader.loadImgWithCenterCrop(
+                    imageView,
+                    Constants.BASE_URL.plus(bean.imageId).plus("/")
+                        .plus(bean.imageUrl.split("@@")[0])
+                )
             }
 
         }
@@ -133,33 +137,27 @@ class CollectActivity : BaseActivity<CollectPresenter>() {
 
     // https://www.jianshu.com/p/bf2e6e5a3ba0
     fun openPreview(position: Int) {
-        PreviewActivity.startPreviewActivity(this, position, object : OnDataListener {
-            override fun getListView(): java.util.ArrayList<View> {
-                return (0 until list_viewholder.size()).mapTo(ArrayList()) {
+        PreviewActivity.startPreviewActivity(this@CollectActivity, position, object : OnDataListener {
+            override val listView: ArrayList<View>
+                get() = (0 until list_viewholder.size()).mapTo(ArrayList()) {
                     list_viewholder[it]?.itemView?.tag as View
                 }
-            }
-
-            override fun getListData(): java.util.ArrayList<Any> {
-                return java.util.ArrayList(imageUrls)
-            }
-
-            override fun getListFragmentClass(): java.util.ArrayList<Class<*>> {
-                return listfragemnt
-            }
+            override val listData: ArrayList<ImageBean>
+                get() = mImages
+            override val listFragmentClass: ArrayList<Class<*>>
+                get() = listfragemnt
 
             override fun onPageSelected(position: Int) {
-                val manager = rv_list_images.layoutManager as GridLayoutManager
+                val manager = rv_root_category.layoutManager as GridLayoutManager
                 if (position < manager.findFirstVisibleItemPosition() || position > manager.findLastVisibleItemPosition()) {
-                    rv_list_images.smoothScrollToPosition(position)
+                    rv_root_category.smoothScrollToPosition(position)
                 }
             }
 
-            override fun onBackPressed(): Boolean {
-                return true
-            }
+            override fun onBackPressed(): Boolean = true
 
             override fun init() {
+
             }
         })
     }

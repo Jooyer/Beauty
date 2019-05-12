@@ -12,5 +12,6 @@
 
     <string name="lib_load_more">加载更多</string>
     <string name="lib_load_completed">加载完成</string>
+    <string name="lib_load_no_more">没有更多数据</string>
 
 </resources>

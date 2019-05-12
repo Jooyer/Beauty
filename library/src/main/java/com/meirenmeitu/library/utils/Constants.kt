@@ -20,9 +20,14 @@ object Constants {
     const val BASE_URL = "http://39.105.178.65:80/images/"
 
     /**
+     * 屏幕宽高比
+     */
+    const val KEY_WIDTH_HEIGHT_RATE = "KEY_WIDTH_HEIGHT_RATE"
+
+    /**
      * 屏幕真实高度
      */
-    const val SCREEN_REAL_HEIGHT = "SCREEN_REAL_HEIGHT"
+//    const val SCREEN_REAL_HEIGHT = "SCREEN_REAL_HEIGHT"
 
     /**
      * 侧滑菜单类型
@@ -34,5 +39,8 @@ object Constants {
      */
     const val KEY_NETWORK_STATE = "KEY_NETWORK_STATE"
 
+
+    const val PAGE_INFO_SIZE_PRE_PAGE_10 = 10L
+    const val PAGE_INFO_SIZE_PRE_PAGE_20 = 20L
 
 }

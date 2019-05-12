@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import com.meirenmeitu.beauty.bean.ImageBean
 import com.meirenmeitu.beauty.model.CategoryModel
 import com.meirenmeitu.beauty.view.CategoryFragment
+import com.meirenmeitu.net.response.PageInfo
 import com.meirenmeitu.net.utils.CallBack
 import com.meirenmeitu.ui.mvp.BasePresenter
 
@@ -20,12 +21,12 @@ class CategoryPresenter(view: CategoryFragment) :
     BasePresenter<CategoryFragment, CategoryModel>(view, CategoryModel()) {
     private val GET_SERIES_IMAGE_TAG = "GET_SERIES_IMAGE_TAG"
     private val GET_IMAGE_OF_SERIES_TAG = "GET_IMAGE_OF_SERIES_TAG"
-    val mImages = MutableLiveData<List<ImageBean>>()
+    val mImages = MutableLiveData<PageInfo<List<ImageBean>>>()
     val mImage = MutableLiveData<ImageBean>()
 
-    fun getSeries(type: Int) {
-        mModel.getSeries(GET_SERIES_IMAGE_TAG, type, object : CallBack<List<ImageBean>> {
-            override fun callback(data: List<ImageBean>) {
+    fun getImages(type: Int, page: Long,size: Long) {
+        mModel.getImages(GET_SERIES_IMAGE_TAG, type,page,size, object : CallBack<PageInfo<List<ImageBean>>> {
+            override fun callback(data: PageInfo<List<ImageBean>>) {
                 mImages.value = data
             }
         })

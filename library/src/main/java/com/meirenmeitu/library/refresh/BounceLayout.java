@@ -420,6 +420,12 @@ public class BounceLayout extends FrameLayout {
 
     }
 
+    public void setNoMoreData(boolean noMore){
+        if (null != footerView){
+            footerView.setNoMoreData(noMore);
+        }
+    }
+
     public void setDampingCoefficient(float dampingCoefficient) {
         this.dampingCoefficient = dampingCoefficient;
     }

@@ -21,6 +21,7 @@ public abstract class BaseFooterView extends FrameLayout {
     public final static int FOOTER_RELEASE = 0x006;//释放加载更多
     public final static int FOOTER_LOADING = 0x007;//正在加载
     public final static int FOOTER_COMPLETED = 0x008;//加载完成
+    public final static int FOOTER_NO_MORE = 0x009;//没有更多数据
     protected boolean canTranslation = true;
 
     public BaseFooterView(@NonNull Context context) {
@@ -45,6 +46,8 @@ public abstract class BaseFooterView extends FrameLayout {
     public abstract boolean checkLoading();
     /*加载完成*/
     public abstract void LoadingCompleted();
+    /*没有更多*/
+    public abstract void setNoMoreData(boolean noMore);
     /*获得底部高度*/
     public abstract int getFooterHeight();
     public void setCanTranslation(boolean canTranslation) {

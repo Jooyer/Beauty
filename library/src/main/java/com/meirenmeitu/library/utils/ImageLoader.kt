@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomViewTarget
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.meirenmeitu.library.R
@@ -34,7 +35,6 @@ Glide.with(this)
 
 object ImageLoader {
 
-
     fun loadImgWithCenterCrop(imageView: ImageView, path: String) {
         Glide.with(imageView.context.applicationContext)
             .load(path)
@@ -46,6 +46,59 @@ object ImageLoader {
                     .centerCrop()
             )
             .into(imageView)
+    }
+
+    fun loadImgWithCenterCropMatchWidth(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+//            .listener(object :RequestListener<Drawable>{
+//                override fun onLoadFailed(
+//                    e: GlideException?,
+//                    model: Any?,
+//                    target: Target<Drawable>?,
+//                    isFirstResource: Boolean
+//                ): Boolean {
+//                    return false
+//                }
+//
+//                override fun onResourceReady(
+//                    resource: Drawable,
+//                    model: Any?,
+//                    target: Target<Drawable>?,
+//                    dataSource: DataSource?,
+//                    isFirstResource: Boolean
+//                ): Boolean {
+//                    if (imageView.scaleType != ImageView.ScaleType.FIT_XY) {
+//                        imageView.scaleType = ImageView.ScaleType.FIT_XY
+//                    }
+////                    val params = imageView.layoutParams
+////                    val vw = imageView.width - imageView.paddingLeft -imageView.paddingRight
+////                    val scale = vw * 1.0F / resource.intrinsicWidth
+////                    val vh = Math.round(resource.intrinsicHeight * scale)
+////                    params.height = vh + imageView.paddingTop + imageView.paddingBottom
+////                    imageView.layoutParams = params
+//                    return false
+//                }
+//
+//            })
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+            )
+            .into(object : CustomViewTarget<ImageView,Drawable>(imageView){
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                }
+
+                override fun onResourceCleared(placeholder: Drawable?) {
+                }
+
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                    imageView.setImageDrawable(resource)
+                }
+
+            })
     }
 
     fun loadImgWithCenterCrop(imageView: ImageView, drawableId: Int) {
@@ -235,21 +288,75 @@ object ImageLoader {
             })
     }
 
-    fun loadWithDrawableTransition(imageView: ImageView, path: String, drawable: Drawable) {
+    fun loadWithDrawableCenterCropTransition(imageView: ImageView, path: String, drawable: Int) {
         Glide.with(imageView.context.applicationContext)
             .load(path)
             .transition(DrawableTransitionOptions.withCrossFade())
             .apply(
                 RequestOptions()
                     .priority(Priority.HIGH)
-                    .centerCrop()
                     .placeholder(drawable)
                     .error(drawable)
+                    .centerCrop()
             ).into(imageView)
 
     }
 
-    fun loadWithDrawableTransition(imageView: ImageView, path: String, drawable: Int) {
+    fun loadWithDrawableCenterCropTransitionMatchWidth(imageView: ImageView, path: String, drawable: Int) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+//            .listener(object :RequestListener<Drawable>{
+//                override fun onLoadFailed(
+//                    e: GlideException?,
+//                    model: Any?,
+//                    target: Target<Drawable>?,
+//                    isFirstResource: Boolean
+//                ): Boolean {
+//                    return false
+//                }
+//
+//                override fun onResourceReady(
+//                    resource: Drawable,
+//                    model: Any?,
+//                    target: Target<Drawable>?,
+//                    dataSource: DataSource?,
+//                    isFirstResource: Boolean
+//                ): Boolean {
+//                    if (imageView.scaleType != ImageView.ScaleType.FIT_XY) {
+//                        imageView.scaleType = ImageView.ScaleType.FIT_XY
+//                    }
+////                    val params = imageView.layoutParams
+////                    val vw = imageView.width - imageView.paddingLeft -imageView.paddingRight
+////                    val scale = vw * 1.0F / resource.intrinsicWidth
+////                    val vh = Math.round(resource.intrinsicHeight * scale)
+////                    params.height = vh + imageView.paddingTop + imageView.paddingBottom
+////                    imageView.layoutParams = params
+//                    return false
+//                }
+//
+//            })
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(drawable)
+                    .error(drawable)
+            )
+            .into(object : CustomViewTarget<ImageView,Drawable>(imageView){
+            override fun onLoadFailed(errorDrawable: Drawable?) {
+            }
+
+            override fun onResourceCleared(placeholder: Drawable?) {
+            }
+
+            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                imageView.setImageDrawable(resource)
+            }
+
+        })
+    }
+
+
+    fun loadWithDrawableFitCenterTransition(imageView: ImageView, path: String, drawable: Int) {
         Glide.with(imageView.context.applicationContext)
             .load(path)
             .transition(DrawableTransitionOptions.withCrossFade())
@@ -295,4 +402,4 @@ RequestOptions options =new RequestOptions()
 
 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)//只缓存最终的图片 ;
 
-        **/
+ **/

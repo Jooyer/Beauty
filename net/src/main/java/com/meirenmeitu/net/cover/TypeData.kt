@@ -13,7 +13,7 @@ package com.meirenmeitu.net.cover
 annotation class TypeData(
         val successCode: Int = 200,
         val rspCodeKey: String = "code",
-        val errorMsgKey: String = "message",
+        val errorMsgKey: String = "msg",
         val dataKey: String = "", // data
         val listKey: String = "" // list
 )

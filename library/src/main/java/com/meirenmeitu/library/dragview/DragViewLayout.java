@@ -28,7 +28,7 @@ public class DragViewLayout extends RelativeLayout {
      * 当前要关闭的View的的监听，由于启动的view不受控制，所以位置会随时发生变化，所以要实时监听
      */
     public interface OnCurViewListener {
-        public ImageBean getCurView();
+        public Image getCurView();
     }
 
     OnCurViewListener mOnCurViewListener = null;
@@ -176,6 +176,8 @@ public class DragViewLayout extends RelativeLayout {
         //缩放到关闭的Scale
         closeScaleY = (float) closeHeight / getDragView().getHeight();
         closeScaleX = (float) closeWidth / getDragView().getWidth();
+        Log.e("Test","DragView==========closeHeight: " + closeHeight + " ========closeWidth: " + closeWidth);
+        Log.e("Test","DragView==========getHeight: " + getDragView().getHeight() + " ========getWidth: " + getDragView().getWidth());
         ObjectAnimator translationX = ObjectAnimator.ofFloat(getDragView(), "translationX", 0, closeLeft - getDragView().getLeft());
         ObjectAnimator translationY = ObjectAnimator.ofFloat(getDragView(), "translationY", 0, closeTop - getDragView().getTop());
         //创建透明度动画
@@ -227,7 +229,7 @@ public class DragViewLayout extends RelativeLayout {
 
     }
 
-    public void setStartView(final ImageBean mImageBean) {
+    public void setStartView(final Image mImage) {
         closing = false;
         getDragView().setPivotX(0);
         getDragView().setPivotY(0);
@@ -243,7 +245,7 @@ public class DragViewLayout extends RelativeLayout {
         setCurView(null);
         if (!first) return;
         first = false;
-        setCurView(mImageBean);
+        setCurView(mImage);
         staring = true;
 //        //缩放到关闭的Scale
         closeScaleY = (float) closeHeight / getDragView().getHeight();
@@ -291,8 +293,8 @@ public class DragViewLayout extends RelativeLayout {
 
     }
 
-    public void setCurView(ImageBean mImageBean) {
-        if (mImageBean == null) {
+    public void setCurView(Image mImage) {
+        if (mImage == null) {
             isCurView = false;
             closeTop = 0;
             closeLeft = 0;
@@ -302,10 +304,10 @@ public class DragViewLayout extends RelativeLayout {
             closeBottom = 0;
         } else {
             isCurView = true;
-            closeTop = mImageBean.top;
-            closeLeft = mImageBean.left;
-            closeHeight = mImageBean.height;
-            closeWidth = mImageBean.width;
+            closeTop = mImage.top;
+            closeLeft = mImage.left;
+            closeHeight = mImage.height;
+            closeWidth = mImage.width;
             closeRight = closeLeft + closeWidth;
             closeBottom = closeTop + closeHeight;
         }
@@ -701,11 +703,12 @@ public class DragViewLayout extends RelativeLayout {
         return true;
     }
 
-    public static class ImageBean implements Parcelable {
+    public static class Image implements Parcelable {
         public int top;
         public int left;
         public int width;
         public int height;
+        public float rate;
 
         @Override
         public int describeContents() {
@@ -718,37 +721,40 @@ public class DragViewLayout extends RelativeLayout {
             dest.writeInt(this.left);
             dest.writeInt(this.width);
             dest.writeInt(this.height);
+            dest.writeFloat(this.rate);
         }
 
-        public ImageBean() {
+        public Image() {
         }
 
-        private ImageBean(Parcel in) {
+        private Image(Parcel in) {
             this.top = in.readInt();
             this.left = in.readInt();
             this.width = in.readInt();
             this.height = in.readInt();
+            this.rate = in.readFloat();
         }
 
-        public static final Creator<ImageBean> CREATOR = new Creator<ImageBean>() {
+        public static final Creator<Image> CREATOR = new Creator<Image>() {
             @Override
-            public ImageBean createFromParcel(Parcel source) {
-                return new ImageBean(source);
+            public Image createFromParcel(Parcel source) {
+                return new Image(source);
             }
 
             @Override
-            public ImageBean[] newArray(int size) {
-                return new ImageBean[size];
+            public Image[] newArray(int size) {
+                return new Image[size];
             }
         };
 
         @Override
         public String toString() {
-            return "ImageBean{" +
+            return "Image{" +
                     "top=" + top +
                     ", left=" + left +
                     ", width=" + width +
                     ", height=" + height +
+                    ", rate=" + rate +
                     '}';
         }
     }

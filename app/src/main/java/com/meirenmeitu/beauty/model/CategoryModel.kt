@@ -2,6 +2,7 @@ package com.meirenmeitu.beauty.model
 
 import com.meirenmeitu.beauty.bean.ImageBean
 import com.meirenmeitu.beauty.net.AppService
+import com.meirenmeitu.net.response.PageInfo
 import com.meirenmeitu.net.retrofit.RxRetrofit
 import com.meirenmeitu.net.utils.CallBack
 import com.meirenmeitu.ui.mvp.BaseModel
@@ -18,9 +19,9 @@ import org.jetbrains.annotations.NotNull
  */
 class CategoryModel : BaseModel() {
 
-    fun getSeries(@NotNull tag: String, type: Int, callback: CallBack<List<ImageBean>>) {
+    fun getImages(@NotNull tag: String, type: Int, page: Long,size: Long, callback: CallBack<PageInfo<List<ImageBean>>>) {
         mRequestList[tag] = RxRetrofit.instance.getApi(AppService::class.java)
-            .getSeries(type)
+            .getImages(type,page, size)
             .compose(RxRetrofit.instance.maybeTransformer())
             .subscribe({ callback.callback(it) },
                 { callback.callError(msg = it.message ?: "") })

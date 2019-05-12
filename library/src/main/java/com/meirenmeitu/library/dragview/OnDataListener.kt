@@ -1,8 +1,6 @@
-package com.meirenmeitu.library.dragview;
+package com.meirenmeitu.library.dragview
 
-import android.view.View;
-
-import java.util.ArrayList;
+import android.view.View
 
 /**
  * @Project 晓可广场
@@ -13,33 +11,33 @@ import java.util.ArrayList;
  * @Copyright 2018 www.scshuimukeji.cn Inc. All rights reserved.
  * 注意: 本内容仅限于四川水木科技有限公司内部传阅，禁止外泄以及用于其他的商业目的
  */
-public interface OnDataListener {
+interface OnDataListener {
 
     /**
      * 视图列表
      */
-    ArrayList<View> getListView();
+    val listView: ArrayList<View>
 
     /**
      * 数据列表
      */
-    ArrayList<Object> getListData();
+    val listData: ArrayList<*>
 
     /**
      * Frament列表，注意是Frament.class列表
      */
-    ArrayList<Class> getListFragmentClass();
+    val listFragmentClass: ArrayList<Class<*>>
 
-    void onPageSelected(int position);
+    fun onPageSelected(position: Int)
 
     /**
      * true 代表运行执行onBackPressed，false则禁止onBackPressed
      */
-    boolean onBackPressed();
+    fun onBackPressed(): Boolean
 
     /**
      * 处理一些初始化操作
      */
-    void init();
+    fun init()
 
 }

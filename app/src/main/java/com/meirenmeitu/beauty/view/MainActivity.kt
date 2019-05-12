@@ -298,7 +298,8 @@ class MainActivity : BaseActivity<MainPresenter>() {
      * 显示主页
      */
     private fun showHomeFragment() {
-        MMKV.defaultMMKV().encode(Constants.SCREEN_REAL_HEIGHT, ScreenUtils.getRealHeight(this))
+        MMKV.defaultMMKV().encode(Constants.KEY_WIDTH_HEIGHT_RATE,
+            DensityUtils.getWindowSize(this).widthPixels*1.0F/ScreenUtils.getScreenHeight(this))
         showStatusBarAndNavigationBar()
         supportFragmentManager.beginTransaction()
 //            .setCustomAnimations(

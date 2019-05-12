@@ -3,7 +3,6 @@ package com.meirenmeitu.library.utils
 import android.app.Activity
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Point
 import android.graphics.Rect
 import android.view.*
@@ -94,6 +93,9 @@ object ScreenUtils {
         }
     }
 
+    /**
+     *  获取显示的高度,不正确
+     */
     fun getRealHeight(context: Activity): Int {
         val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val display = windowManager.defaultDisplay
@@ -102,6 +104,16 @@ object ScreenUtils {
         val navigationBarHeight = getNavigationBarHeight(context)
 //        println("getRealHeight=========${isNavigationBarAvailable(context)}  --> navigationBarHeight: $navigationBarHeight")
         return outPoint.y - navigationBarHeight
+    }
+
+    /**
+     * 真实屏幕的高度
+     */
+    fun getScreenHeight(context: Activity): Int {
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val outPoint = Point()
+        windowManager.defaultDisplay.getRealSize(outPoint)
+        return outPoint.y
     }
 
     fun getRealWidth(context: Context): Int {

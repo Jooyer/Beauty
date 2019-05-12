@@ -35,16 +35,16 @@ public class DefaultFooter extends BaseFooterView {
     private ImageView ivFooterTip;
 
     public DefaultFooter(@NonNull Context context) {
-        this(context,null);
+        this(context, null);
     }
 
     public DefaultFooter(@NonNull Context context, @Nullable AttributeSet attrs) {
-        this(context, attrs,0);
+        this(context, attrs, 0);
     }
 
     public DefaultFooter(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context,attrs,defStyleAttr);
+        init(context, attrs, defStyleAttr);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -53,10 +53,10 @@ public class DefaultFooter extends BaseFooterView {
         childHeight = mContext.getResources().getDimensionPixelSize(R.dimen.height_48);
         status = FOOTER_PULL;
         //添加底部内容
-        View view = LayoutInflater.from(context).inflate(R.layout.footer_default,this,false);
+        View view = LayoutInflater.from(context).inflate(R.layout.footer_default, this, false);
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
-                ,childHeight);
-        addView(view,lp);
+                , childHeight);
+        addView(view, lp);
         pbFooterTip = (ProgressBar) view.findViewById(R.id.pb_loading);
         ivFooterTip = (ImageView) view.findViewById(R.id.iv_tip);
         tvFooterTip = (TextView) view.findViewById(R.id.tv_tip);
@@ -71,22 +71,30 @@ public class DefaultFooter extends BaseFooterView {
         if (status == FOOTER_LOADING) {//只要是正在加载
             return;
         }
-        if(dragY >= 0){//回到开始位置
+
+        if (status == FOOTER_NO_MORE){ // 没有更多数据
+            tvFooterTip.setText(mContext.getResources().getString(R.string.lib_load_no_more));
+            ivFooterTip.setVisibility(GONE);
+            pbFooterTip.setVisibility(GONE);
+            return;
+        }
+
+        if (dragY >= 0) {//回到开始位置
             status = FOOTER_PULL;
             ivFooterTip.setVisibility(GONE);
             tvFooterTip.setText(mContext.getResources().getString(R.string.lib_load_more));
             pbFooterTip.setVisibility(GONE);
         }
         if (status == FOOTER_PULL) {//开始拖动
-            if(dragY <= -childHeight) {//一旦超过刷新头高度
+            if (dragY <= -childHeight) {//一旦超过刷新头高度
                 status = FOOTER_RELEASE;
                 ivFooterTip.setVisibility(GONE);
                 tvFooterTip.setText(mContext.getResources().getString(R.string.lib_load_more));
                 pbFooterTip.setVisibility(GONE);
             }
         }
-        if(status == FOOTER_RELEASE){//还未释放拖拉回去
-            if(dragY >= -childHeight) {//一旦低于刷新头高度
+        if (status == FOOTER_RELEASE) {//还未释放拖拉回去
+            if (dragY >= -childHeight) {//一旦低于刷新头高度
                 status = FOOTER_PULL;
                 ivFooterTip.setVisibility(GONE);
                 tvFooterTip.setText(mContext.getResources().getString(R.string.lib_load_more));
@@ -108,19 +116,19 @@ public class DefaultFooter extends BaseFooterView {
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.BOTTOM;
-        lp.bottomMargin =  -childHeight;
-        parent.addView(this,lp);
+        lp.bottomMargin = -childHeight;
+        parent.addView(this, lp);
     }
 
     @Override
     public boolean checkLoading() {
-        if ((status == FOOTER_RELEASE || status == FOOTER_LOADING) && totalOffset<= -childHeight) {
+        if ((status == FOOTER_RELEASE || status == FOOTER_LOADING) && totalOffset <= -childHeight) {
             status = FOOTER_LOADING;
             ivFooterTip.setVisibility(GONE);
             tvFooterTip.setText(mContext.getResources().getString(R.string.lib_loading));
             pbFooterTip.setVisibility(VISIBLE);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -132,6 +140,23 @@ public class DefaultFooter extends BaseFooterView {
         ivFooterTip.setVisibility(VISIBLE);
         tvFooterTip.setText(mContext.getResources().getString(R.string.lib_load_completed));
         pbFooterTip.setVisibility(GONE);
+    }
+
+    @Override
+    public void setNoMoreData(boolean noMore) {
+        if (noMore){
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    status = FOOTER_NO_MORE;
+                    tvFooterTip.setText(mContext.getResources().getString(R.string.lib_load_no_more));
+                    ivFooterTip.setVisibility(GONE);
+                    pbFooterTip.setVisibility(GONE);
+                }
+            }, 1000);
+        }else {
+            status = FOOTER_RELEASE;
+        }
     }
 
     @Override

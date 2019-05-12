@@ -3,11 +3,11 @@ package com.meirenmeitu.beauty.view
 
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.util.SparseArray
 import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.util.set
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -25,7 +25,10 @@ import com.meirenmeitu.library.refresh.EventForwardingHelper
 import com.meirenmeitu.library.refresh.NormalBounceHandler
 import com.meirenmeitu.library.refresh.footer.DefaultFooter
 import com.meirenmeitu.library.refresh.header.DefaultHeader
-import com.meirenmeitu.library.utils.*
+import com.meirenmeitu.library.utils.Constants
+import com.meirenmeitu.library.utils.DensityUtils
+import com.meirenmeitu.library.utils.ImageLoader
+import com.meirenmeitu.library.utils.JSnackBar
 import com.meirenmeitu.ui.mvp.BaseFragment
 import com.tencent.mmkv.MMKV
 import kotlinx.android.synthetic.main.fragment_category.*
@@ -36,71 +39,11 @@ import kotlinx.android.synthetic.main.fragment_category.*
  */
 class CategoryFragment : BaseFragment<CategoryPresenter>() {
     private val mImages = ArrayList<ImageBean>()
-
-    private val imageUrls = arrayListOf<String>(
-        "https://img-my.csdn.net/uploads/201508/05/1438760758_3497.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760758_6667.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760757_3588.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760756_3304.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760755_6715.jpeg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760726_5120.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760726_8364.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760725_4031.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760724_9463.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760724_2371.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760707_4653.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760706_6864.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760706_9279.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760704_2341.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760704_5707.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760685_5091.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760685_4444.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760684_8827.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760683_3691.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760683_7315.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760663_7318.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760662_3454.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760662_5113.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760661_3305.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760661_7416.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760589_2946.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760589_1100.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760588_8297.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760587_2575.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760587_8906.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760550_2875.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760550_9517.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760549_7093.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760549_1352.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760548_2780.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760531_1776.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760531_1380.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760530_4944.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760530_5750.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760529_3289.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760500_7871.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760500_6063.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760499_6304.jpeg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760499_5081.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760498_7007.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760478_3128.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760478_6766.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760477_1358.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760477_3540.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760476_1240.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760446_7993.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760446_3641.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760445_3283.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760444_8623.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760444_6822.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760422_2224.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760421_2824.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760420_2660.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760420_7188.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760419_4123.jpg"
-    )
     internal val listfragemnt = java.util.ArrayList<Class<*>>()
     private var list_viewholder = SparseArray<ViewHolder>()
+
+    private var currentPage = 1L
+    private var totalPage = 0L
 
     companion object {
         val TAG = CategoryFragment::class.java.simpleName
@@ -144,18 +87,22 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         bl_container_category.setBounceCallBack(object : BounceCallBack {
             //刷新回调
             override fun startRefresh() {
-//                arguments?.getInt(TAG,0).let {
-//                    mPresenter.getSeries(it?:0)
-//                }
-
-                mPresenter.getOneImageInSeries("176eca57a37f4de8936c401d1b2afa42", "002")
+                arguments?.getInt(TAG, 0).let {
+                    mPresenter.getImages(it ?: 0, 1, Constants.PAGE_INFO_SIZE_PRE_PAGE_10)
+                }
+                bl_container_category.setNoMoreData(false)
+                // TODO 如下测试某个系列的一张图
+//                mPresenter.getOneImageInSeries("176eca57a37f4de8936c401d1b2afa42", "002")
 
             }
 
             override fun startLoadingMore() {
-                Handler().postDelayed(Runnable {
-                    bl_container_category.setLoadingMoreCompleted()
-                }, 2000)
+                currentPage++
+                if (currentPage <= totalPage) {
+                    arguments?.getInt(TAG, 0).let {
+                        mPresenter.getImages(it ?: 0, currentPage, 10)
+                    }
+                }
             }
         })
     }
@@ -164,10 +111,24 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         setAdapter()
         bl_container_category.autoRefresh()
         mPresenter.mImages.observe(this, Observer {
-            Log.e("Test", "=============== ")
-            mImages.clear()
-            mImages.addAll(it)
+            totalPage = Math.ceil(it.total.toDouble() / Constants.PAGE_INFO_SIZE_PRE_PAGE_10).toLong()
+            if (1L == currentPage) {
+                mImages.clear()
+            }
+            mImages.addAll(it.list)
+
+            listfragemnt.clear()
+            mImages.forEach {
+                listfragemnt.add(PreviewFragment::class.java)
+            }
+
             rv_root_category.adapter?.notifyDataSetChanged()
+            bl_container_category.setRefreshCompleted()
+            bl_container_category.setLoadingMoreCompleted()
+
+            if (currentPage == totalPage) {
+                bl_container_category.setNoMoreData(true)
+            }
         })
 
         mPresenter.mImage.observe(this, Observer {
@@ -181,31 +142,33 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
     }
 
     private fun setAdapter() {
-        listfragemnt.add(PreviewFragment::class.java)
         rv_root_category.layoutManager = GridLayoutManager(mActivity, 2)
 
         rv_root_category.addItemDecoration(
-            NormalDecoration(mActivity, DensityUtils.dpToPx(3), Color.WHITE)
+            NormalDecoration(mActivity, DensityUtils.dpToPx(4), Color.RED)
         )
 
         val adapter = object : CommonAdapter<ImageBean>(mActivity, R.layout.item_image_category, mImages) {
-            val statusBarHeight = StatusBarUtil.getStatusBarHeight(mActivity)
-            //            val navigationBarHeight = ScreenUtils.getNavigationBarHeight(mActivity)
-            val height = (MMKV.defaultMMKV().decodeInt(Constants.SCREEN_REAL_HEIGHT, 0)
-                    - DensityUtils.dpToPx(100) - statusBarHeight) / 2
-
             override fun convert(holder: ViewHolder, bean: ImageBean, position: Int) {
                 val imageView = holder.getView<ImageView>(R.id.iv_content_item_category)
+                holder.getView<TextView>(R.id.tv_content_item_title).text = bean.imageName
+
+                val lp = imageView.layoutParams
+                lp.width = DensityUtils.getWindowSize(mActivity).widthPixels / 2 - DensityUtils.dpToPx(2)
+                lp.height = (lp.width / MMKV.defaultMMKV().decodeFloat(Constants.KEY_WIDTH_HEIGHT_RATE,1.0F)).toInt()
+                imageView.layoutParams = lp
+
                 val param = holder.itemView.layoutParams as RecyclerView.LayoutParams
-                if (0 >= height) {
-                    param.height = 800
-                } else {
-                    param.height = height
-                }
+                param.height = lp.height + DensityUtils.dpToPx(45)
                 holder.itemView.layoutParams = param
+
                 holder.itemView.tag = imageView
                 list_viewholder[position] = holder
-                ImageLoader.loadImgWithCenterCrop(imageView,Constants.BASE_URL.plus(bean.imageId).plus("/").plus(bean.imageUrl) )
+                ImageLoader.loadImgWithCenterCrop(
+                    imageView,
+                    Constants.BASE_URL.plus(bean.imageId).plus("/")
+                        .plus(bean.imageUrl.split("@@")[0])
+                )
             }
 
         }
@@ -221,20 +184,16 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 
     // https://www.jianshu.com/p/bf2e6e5a3ba0
     fun openPreview(position: Int) {
+
         PreviewActivity.startPreviewActivity(mActivity, position, object : OnDataListener {
-            override fun getListView(): java.util.ArrayList<View> {
-                return (0 until list_viewholder.size()).mapTo(ArrayList()) {
+            override val listView: ArrayList<View>
+                get() = (0 until list_viewholder.size()).mapTo(ArrayList()) {
                     list_viewholder[it]?.itemView?.tag as View
                 }
-            }
-
-            override fun getListData(): java.util.ArrayList<Any> {
-                return java.util.ArrayList(imageUrls)
-            }
-
-            override fun getListFragmentClass(): java.util.ArrayList<Class<*>> {
-                return listfragemnt
-            }
+            override val listData: ArrayList<ImageBean>
+                get() = mImages
+            override val listFragmentClass: ArrayList<Class<*>>
+                get() = listfragemnt
 
             override fun onPageSelected(position: Int) {
                 val manager = rv_root_category.layoutManager as GridLayoutManager
@@ -243,11 +202,10 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
                 }
             }
 
-            override fun onBackPressed(): Boolean {
-                return true
-            }
+            override fun onBackPressed(): Boolean = true
 
             override fun init() {
+
             }
         })
 
