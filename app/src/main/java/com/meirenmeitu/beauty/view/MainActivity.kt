@@ -298,8 +298,11 @@ class MainActivity : BaseActivity<MainPresenter>() {
      * 显示主页
      */
     private fun showHomeFragment() {
+
+
         MMKV.defaultMMKV().encode(Constants.KEY_WIDTH_HEIGHT_RATE,
-            DensityUtils.getWindowSize(this).widthPixels*1.0F/ScreenUtils.getScreenHeight(this))
+            DensityUtils.getWindowSize(this).widthPixels*1.0F/
+                    (ScreenUtils.getScreenHeight(this) - ScreenUtils.getNavigationBarHeight(this)))
         showStatusBarAndNavigationBar()
         supportFragmentManager.beginTransaction()
 //            .setCustomAnimations(
@@ -314,8 +317,8 @@ class MainActivity : BaseActivity<MainPresenter>() {
 //            )
             .replace(R.id.ll_root_main, HomeFragment.newInstance(), HomeFragment.TAG)
             .commitNowAllowingStateLoss()
-        // 去掉背景色
-        window.setBackgroundDrawable(null)
+        // 去掉背景色,就是将 style 中设置的windowBackground颜色去掉
+//        window.setBackgroundDrawable(null)
     }
 
     // https://blog.csdn.net/qq_39249422/article/details/80410332

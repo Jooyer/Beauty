@@ -7,7 +7,6 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -133,7 +132,7 @@ public class DragViewLayout extends RelativeLayout {
     }
 
     public void maximize() {
-        Log.e("DragView", "===============maximize");
+//        Log.e("DragView", "===============maximize");
         smoothSlideTo(0f);
     }
 
@@ -161,7 +160,7 @@ public class DragViewLayout extends RelativeLayout {
         } else { //没有指定位置,打开
             y = firstTop;
         }
-        Log.e("DragView", "minimize===============x: " + x + " =========y: " + y);
+//        Log.e("DragView", "minimize===============x: " + x + " =========y: " + y);
         if (mDragHelper.smoothSlideViewTo(getDragView(), x, y)) {
             ViewCompat.postInvalidateOnAnimation(this);
             postInvalidate();
@@ -176,8 +175,8 @@ public class DragViewLayout extends RelativeLayout {
         //缩放到关闭的Scale
         closeScaleY = (float) closeHeight / getDragView().getHeight();
         closeScaleX = (float) closeWidth / getDragView().getWidth();
-        Log.e("Test","DragView==========closeHeight: " + closeHeight + " ========closeWidth: " + closeWidth);
-        Log.e("Test","DragView==========getHeight: " + getDragView().getHeight() + " ========getWidth: " + getDragView().getWidth());
+//        Log.e("Test","DragView==========closeHeight: " + closeHeight + " ========closeWidth: " + closeWidth);
+//        Log.e("Test","DragView==========getHeight: " + getDragView().getHeight() + " ========getWidth: " + getDragView().getWidth());
         ObjectAnimator translationX = ObjectAnimator.ofFloat(getDragView(), "translationX", 0, closeLeft - getDragView().getLeft());
         ObjectAnimator translationY = ObjectAnimator.ofFloat(getDragView(), "translationY", 0, closeTop - getDragView().getTop());
         //创建透明度动画
@@ -208,7 +207,7 @@ public class DragViewLayout extends RelativeLayout {
                 isScrolling = false;
                 closing = false;
                 if (mOnDrawerStatusListener != null) {
-                    Log.e("DragView", "===============onAnimationEnd");
+//                    Log.e("DragView", "===============onAnimationEnd");
                     mOnDrawerStatusListener.onStatus(CLOSE);
                 }
                 set.removeAllListeners();
@@ -445,7 +444,7 @@ public class DragViewLayout extends RelativeLayout {
                     isScrolling = false;
                     closing = false;
                     if (mOnDrawerStatusListener != null) {
-                        Log.e("DragView", "===============(change==1)");
+//                        Log.e("DragView", "===============(change==1)");
                         mOnDrawerStatusListener.onStatus(CLOSE);
                     }
                 }
@@ -465,7 +464,7 @@ public class DragViewLayout extends RelativeLayout {
                 }
                 return;
             }
-            Log.e("DragView", "onViewPositionChanged===============closing: " + closing  + " ======staring: " + staring);
+//            Log.e("DragView", "onViewPositionChanged===============closing: " + closing  + " ======staring: " + staring);
 
             /**指定位置，正在关闭***/
             if (closing && !staring) {
@@ -473,7 +472,7 @@ public class DragViewLayout extends RelativeLayout {
                 if (closeDistance == 0) {
                     closeDistance = top - closeTop;
                 }
-                Log.e("DragView", "===============closing");
+//                Log.e("DragView", "===============closing");
                 //变化1->0
                 float change = ((top - closeTop) / closeDistance);
 
@@ -503,7 +502,7 @@ public class DragViewLayout extends RelativeLayout {
                     isScrolling = false;
 //                    closing = false; // 在这里置为 false 会导致界面闪动
                     if (mOnDrawerStatusListener != null) {
-                        Log.e("DragView", "===============(change==0)");
+//                        Log.e("DragView", "===============(change==0)");
                         mOnDrawerStatusListener.onStatus(CLOSE);
                     }
                 }
@@ -512,7 +511,7 @@ public class DragViewLayout extends RelativeLayout {
                 velocity = dy;
                 dragScale = (1 - mDragOffset);
                 if (dragScale > 1) dragScale = 1;
-                Log.e("DragView", "===============isOpen");
+//                Log.e("DragView", "===============isOpen");
                 getDragView().setPivotX((getDragView().getWidth()) / 2);
                 getDragView().setPivotY((getDragView().getHeight()) / 2);
                 getDragView().setScaleX(dragScale);
@@ -669,14 +668,14 @@ public class DragViewLayout extends RelativeLayout {
                 if (isOpen()) {
                     if (isCurView) {
                         if (mDragOffset > 0.12 || velocity > 15) {
-                            Log.e("DragView", "minimize===============(change==0)1");
+//                            Log.e("DragView", "minimize===============(change==0)1");
                             minimize();
                         } else {
                             maximize();
                         }
                     } else {
                         if (Math.abs((getDragView().getTop() - firstTop)) > 250) {
-                            Log.e("DragView", "minimize===============(change==0)2");
+//                            Log.e("DragView", "minimize===============(change==0)2");
                             minimize();
                         } else {
                             maximize();

@@ -9,7 +9,7 @@ import android.view.*
 import androidx.annotation.NonNull
 
 
-/**
+/** 全面屏适配底部虚拟导航栏: https://www.jianshu.com/p/b20047fdea8a
  * Desc: https://www.cnblogs.com/ldq2016/p/6905429.html
  * Author: Jooyer
  * Date: 2018-09-27
@@ -81,15 +81,12 @@ object ScreenUtils {
      */
     //获取虚拟按键的高度
     fun getNavigationBarHeight(context: Activity): Int {
-        val hasMenuKey = ViewConfiguration.get(context).hasPermanentMenuKey()
-        val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
-        if (!hasMenuKey && !hasBackKey) {
+        return if (isNavigationBarAvailable(context)) {
             val resourceId = context.resources.getIdentifier("navigation_bar_height", "dimen", "android")
             //获取NavigationBar的高度
-            return context.resources.getDimensionPixelSize(resourceId)
-
+            context.resources.getDimensionPixelSize(resourceId)
         } else {
-            return 0
+            0
         }
     }
 

@@ -32,6 +32,7 @@ import com.meirenmeitu.library.utils.JSnackBar
 import com.meirenmeitu.ui.mvp.BaseFragment
 import com.tencent.mmkv.MMKV
 import kotlinx.android.synthetic.main.fragment_category.*
+import java.text.MessageFormat
 
 
 /**
@@ -39,6 +40,7 @@ import kotlinx.android.synthetic.main.fragment_category.*
  */
 class CategoryFragment : BaseFragment<CategoryPresenter>() {
     private val mImages = ArrayList<ImageBean>()
+    private val mSeries = ArrayList<ImageBean>()
     internal val listfragemnt = java.util.ArrayList<Class<*>>()
     private var list_viewholder = SparseArray<ViewHolder>()
 
@@ -117,11 +119,6 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
             }
             mImages.addAll(it.list)
 
-            listfragemnt.clear()
-            mImages.forEach {
-                listfragemnt.add(PreviewFragment::class.java)
-            }
-
             rv_root_category.adapter?.notifyDataSetChanged()
             bl_container_category.setRefreshCompleted()
             bl_container_category.setLoadingMoreCompleted()
@@ -145,13 +142,15 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         rv_root_category.layoutManager = GridLayoutManager(mActivity, 2)
 
         rv_root_category.addItemDecoration(
-            NormalDecoration(mActivity, DensityUtils.dpToPx(4), Color.RED)
+            NormalDecoration(mActivity, DensityUtils.dpToPx(4), Color.WHITE)
         )
 
         val adapter = object : CommonAdapter<ImageBean>(mActivity, R.layout.item_image_category, mImages) {
             override fun convert(holder: ViewHolder, bean: ImageBean, position: Int) {
                 val imageView = holder.getView<ImageView>(R.id.iv_content_item_category)
                 holder.getView<TextView>(R.id.tv_content_item_title).text = bean.imageName
+                holder.getView<TextView>(R.id.tv_content_item_like).text = "${bean.likeCount}"
+                holder.getView<TextView>(R.id.tv_content_item_count).text = MessageFormat.format("{0}P",bean.seriesCount)
 
                 val lp = imageView.layoutParams
                 lp.width = DensityUtils.getWindowSize(mActivity).widthPixels / 2 - DensityUtils.dpToPx(2)
@@ -184,22 +183,34 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 
     // https://www.jianshu.com/p/bf2e6e5a3ba0
     fun openPreview(position: Int) {
+        listfragemnt.clear()
+        mSeries.clear()
+        // 点击封面其实里面包含了一个文件夹,里面有多个图片
+        val imageBean = mImages[position]
+        val urls = imageBean.imageUrl.split("@@")
+        urls.forEach {
+            listfragemnt.add(PreviewFragment::class.java)
+            val image = ImageBean(imageBean.imageId,imageBean.imageName,it,imageBean.imageType,
+                imageBean.collectCount,imageBean.likeCount,imageBean.seriesCount,imageBean.createTime,imageBean.updateTime)
+            mSeries.add(image)
+        }
 
+        Log.e("Test","openPreview============ ${listfragemnt.size}")
         PreviewActivity.startPreviewActivity(mActivity, position, object : OnDataListener {
             override val listView: ArrayList<View>
                 get() = (0 until list_viewholder.size()).mapTo(ArrayList()) {
                     list_viewholder[it]?.itemView?.tag as View
                 }
             override val listData: ArrayList<ImageBean>
-                get() = mImages
+                get() = mSeries
             override val listFragmentClass: ArrayList<Class<*>>
                 get() = listfragemnt
 
             override fun onPageSelected(position: Int) {
-                val manager = rv_root_category.layoutManager as GridLayoutManager
-                if (position < manager.findFirstVisibleItemPosition() || position > manager.findLastVisibleItemPosition()) {
-                    rv_root_category.smoothScrollToPosition(position)
-                }
+//                val manager = rv_root_category.layoutManager as GridLayoutManager
+//                if (position < manager.findFirstVisibleItemPosition() || position > manager.findLastVisibleItemPosition()) {
+//                    rv_root_category.smoothScrollToPosition(position)
+//                }
             }
 
             override fun onBackPressed(): Boolean = true

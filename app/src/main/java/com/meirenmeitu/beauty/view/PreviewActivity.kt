@@ -2,19 +2,13 @@ package com.meirenmeitu.beauty.view
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import android.view.View
-import android.view.ViewTreeObserver
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.meirenmeitu.beauty.R
-import com.meirenmeitu.beauty.bean.ImageBean
 import com.meirenmeitu.beauty.presenter.PreviewPresenter
 import com.meirenmeitu.library.dragview.*
 import com.meirenmeitu.library.utils.Constants
-import com.meirenmeitu.library.utils.DensityUtils
-import com.meirenmeitu.library.utils.ScreenUtils
-import com.meirenmeitu.library.utils.StatusBarUtil
 import com.meirenmeitu.ui.mvp.BaseActivity
 import com.tencent.mmkv.MMKV
 import kotlinx.android.synthetic.main.activity_preview.*
@@ -41,11 +35,12 @@ class PreviewActivity : BaseActivity<PreviewPresenter>(), DragViewLayout.OnDrawe
     DragViewLayout.OnCurViewListener,
     ViewPager.OnPageChangeListener {
 
-    private val mImages = ArrayList<ImageBean>()
-
     private var onDrawerOffsetListener: OnDrawerOffsetListener? = null
     private lateinit var mDragStatePageAdapter: DragStatePagerAdapter
+    // 当前界面滑动到哪里了
     private var currentPosition = 0
+
+    private var mViewPosition = 0;
 
     override fun createPresenter() = PreviewPresenter(this)
 
@@ -55,6 +50,7 @@ class PreviewActivity : BaseActivity<PreviewPresenter>(), DragViewLayout.OnDrawe
         iv_black_background.setBackgroundColor(ContextCompat.getColor(this, R.color.color_2E2E2E))
         resetToolbar()
         currentPosition = intent.getIntExtra(KEY_CURRENT_POSITION, 0)
+        mViewPosition = intent.getIntExtra(KEY_CURRENT_POSITION, 0)
         viewPager.setDragViewLayout(dragLayout)
         dragLayout.dragView = viewPager
         setAdapter()
@@ -74,7 +70,7 @@ class PreviewActivity : BaseActivity<PreviewPresenter>(), DragViewLayout.OnDrawe
         if (null != onDataListener) {
             return getImageBean(
                 if (null != onDataListener)
-                    onDataListener!!.listView[currentPosition] else null
+                    onDataListener!!.listView[mViewPosition] else null
             )
         }
         return null
@@ -100,7 +96,7 @@ class PreviewActivity : BaseActivity<PreviewPresenter>(), DragViewLayout.OnDrawe
             dragLayout.setStartView(
                 getImageBean(
                     if (null != onDataListener)
-                        onDataListener!!.listView[currentPosition] else null
+                        onDataListener!!.listView[mViewPosition] else null
                 )
             )
             if (fragment.dragView is PinchImageView) {
@@ -124,14 +120,14 @@ class PreviewActivity : BaseActivity<PreviewPresenter>(), DragViewLayout.OnDrawe
         )
 
         viewPager.adapter = mDragStatePageAdapter
-        viewPager.currentItem = currentPosition
+//        viewPager.currentItem = currentPosition
         viewPager.addOnPageChangeListener(this)
-        viewPager.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                viewPager.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                onPageSelected(currentPosition)
-            }
-        })
+//        viewPager.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+//            override fun onGlobalLayout() {
+//                viewPager.viewTreeObserver.removeOnGlobalLayoutListener(this)
+//                onPageSelected(0)
+//            }
+//        })
 
         onDataListener?.init()
 
@@ -179,14 +175,15 @@ class PreviewActivity : BaseActivity<PreviewPresenter>(), DragViewLayout.OnDrawe
         imageBean.width = view.width
         imageBean.height = view.height
         imageBean.rate = MMKV.defaultMMKV().decodeFloat(
-            Constants.KEY_WIDTH_HEIGHT_RATE,1F)
+            Constants.KEY_WIDTH_HEIGHT_RATE, 1F
+        )
 
-        Log.e("PreView","======= $imageBean")
-        Log.e("PreView","=======width: " + ScreenUtils.getRealWidth(this))
-        Log.e("PreView","=======height: " + ScreenUtils.getRealHeight(this))
-        Log.e("PreView","=======width: " + DensityUtils.getWindowSize(this).widthPixels)
-        Log.e("PreView","=======height: " + DensityUtils.getWindowSize(this).heightPixels)
-        Log.e("PreView","=======statusBarHeight: " + StatusBarUtil.getStatusBarHeight(this))
+//        Log.e("PreView","======= $imageBean")
+//        Log.e("PreView","=======width: " + ScreenUtils.getRealWidth(this))
+//        Log.e("PreView","=======height: " + ScreenUtils.getRealHeight(this))
+//        Log.e("PreView","=======width: " + DensityUtils.getWindowSize(this).widthPixels)
+//        Log.e("PreView","=======height: " + DensityUtils.getWindowSize(this).heightPixels)
+//        Log.e("PreView","=======statusBarHeight: " + StatusBarUtil.getStatusBarHeight(this))
         return imageBean
     }
 

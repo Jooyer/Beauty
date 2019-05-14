@@ -29,16 +29,14 @@ class PreviewFragment : DragFragment() {
 
     override fun initView() {
         dragView = view.findViewById(R.id.dragview) as PinchImageView
-        Log.e("Test", "initView==========1")
         data?.let {
             val image = it as ImageBean
-            Log.e("Test", "initView==========$image")
+            Log.e("Test","Drag======= ${Constants.BASE_URL.plus(image.imageId).plus("/").plus(image.imageUrl)}")
             dragView?.let {
                 ImageLoader.loadWithDrawableCenterCropTransition(
                     it as AppCompatImageView,
-//                    Constants.BASE_URL.plus(image.imageId).plus("/").plus(image.imageUrl),
                     Constants.BASE_URL.plus(image.imageId).plus("/")
-                        .plus(image.imageUrl.split("@@")[0]),
+                        .plus(image.imageUrl),
                     R.drawable.logo
                 )
             }

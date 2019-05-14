@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">hhh</string>
-    <!--<string name="app_name">美人美图</string>-->
+    <!--<string name="app_name">hhh</string>-->
+    <string name="app_name">美人美图</string>
 
     <string name="comm_collect">我的收藏</string>
     <string name="comm_download">我的下载</string>
