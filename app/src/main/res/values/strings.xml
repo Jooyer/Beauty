@@ -22,4 +22,8 @@
         <item>ic_menu_share</item>
     </string-array>
 
+    <string name="login_about_meirenmeitu">关于我们 &#169; Molue</string>
+    <string name="setting_copyright_info">魔掠科技 版权所有\nCopyright &#169; 2018 Molue.All Rights Reserved</string>
+
+
 </resources>

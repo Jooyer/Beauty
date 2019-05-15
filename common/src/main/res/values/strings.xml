@@ -19,4 +19,7 @@
         <item>相关</item>
     </string-array>
 
+
+    <string name="get_code">获取验证码</string>
+    <string name="code_replay">%ds后重新发送</string>
 </resources>

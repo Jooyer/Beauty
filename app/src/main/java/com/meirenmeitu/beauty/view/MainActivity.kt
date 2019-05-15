@@ -18,12 +18,12 @@ import com.meirenmeitu.base.dialog.JAlertDialog
 import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.bean.LeftDrawerMenu
 import com.meirenmeitu.beauty.presenter.MainPresenter
+import com.meirenmeitu.library.rxbind.RxView
 import com.meirenmeitu.library.utils.*
 import com.meirenmeitu.net.rxbus.RxBus
 import com.meirenmeitu.net.rxbus.RxCodeManager
 import com.meirenmeitu.net.rxbus.RxMessage
 import com.meirenmeitu.ui.mvp.BaseActivity
-import com.tencent.mmkv.MMKV
 import com.yanzhenjie.permission.AndPermission
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.left_menu_home.*
@@ -147,6 +147,19 @@ class MainActivity : BaseActivity<MainPresenter>() {
             RxMessage::class.java,
             RxCodeManager.RX_CODE_OPEN_DRAWER_LAYOUT
         ) { dl_contain_main.openDrawer(GravityCompat.START) })
+
+        RxView.setOnClickListeners(this,cl_left_menu_header)
+    }
+
+    override fun onClick(view: View) {
+        when (view) {
+            cl_left_menu_header -> {
+                dl_contain_main.closeDrawer(GravityCompat.START)
+                window.decorView.postDelayed({
+                    startActivity(Intent(this@MainActivity,LoginActivity::class.java))
+                },350)
+            }
+        }
     }
 
     /**
@@ -277,7 +290,7 @@ class MainActivity : BaseActivity<MainPresenter>() {
                             )
                         }
                     }
-                }, 250)
+                }, 350)
             }
         })
 
@@ -298,11 +311,6 @@ class MainActivity : BaseActivity<MainPresenter>() {
      * 显示主页
      */
     private fun showHomeFragment() {
-
-
-        MMKV.defaultMMKV().encode(Constants.KEY_WIDTH_HEIGHT_RATE,
-            DensityUtils.getWindowSize(this).widthPixels*1.0F/
-                    (ScreenUtils.getScreenHeight(this) - ScreenUtils.getNavigationBarHeight(this)))
         showStatusBarAndNavigationBar()
         supportFragmentManager.beginTransaction()
 //            .setCustomAnimations(

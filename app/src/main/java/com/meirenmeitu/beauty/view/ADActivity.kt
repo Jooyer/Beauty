@@ -6,8 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import android.os.Looper
-import android.util.Base64
 import android.view.View
 import androidx.core.content.ContextCompat
 import com.baidu.mobads.AdSettings
@@ -16,10 +14,10 @@ import com.baidu.mobads.SplashAd
 import com.baidu.mobads.SplashAdListener
 import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.presenter.ADPresenter
-import com.meirenmeitu.library.utils.FileUtil
-import com.meirenmeitu.library.utils.MD5Utils
+import com.meirenmeitu.library.utils.*
 import com.meirenmeitu.net.utils.NetUtil
 import com.meirenmeitu.ui.mvp.BaseActivity
+import com.tencent.mmkv.MMKV
 import com.yanzhenjie.permission.AndPermission
 import kotlinx.android.synthetic.main.activity_ad.*
 
@@ -90,6 +88,10 @@ class ADActivity : BaseActivity<ADPresenter>() {
                     startActivity(localIntent)
                 }.start()
 
+        MMKV.defaultMMKV().encode(
+            Constants.KEY_WIDTH_HEIGHT_RATE,
+            DensityUtils.getWindowSize(this).widthPixels*1.0F/
+                    (ScreenUtils.getScreenHeight(this) - ScreenUtils.getNavigationBarHeight(this)))
 
 //        mInterAd = InterstitialAd(this@ADActivity, adPlaceId)
 //        mInterAd.setListener(object : InterstitialAdListener {

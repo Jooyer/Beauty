@@ -39,8 +39,23 @@ object Constants {
      */
     const val KEY_NETWORK_STATE = "KEY_NETWORK_STATE"
 
-
+    /**
+     * 分页数据
+     */
     const val PAGE_INFO_SIZE_PRE_PAGE_10 = 10L
     const val PAGE_INFO_SIZE_PRE_PAGE_20 = 20L
+
+    /**
+     * 登录Token
+     */
+    const val APP_REQUEST_TOKEN = "app_request_token"
+    /**
+     * 用户ID
+     */
+    const val APP_USER_ID = "app_user_id"
+    /**
+     * 用户名称
+     */
+    val APP_USER_NAME = "app_user_name"
 
 }
