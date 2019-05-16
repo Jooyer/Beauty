@@ -3,8 +3,13 @@ package com.meirenmeitu.beauty.view
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.database.ContentObserver
 import android.graphics.Point
 import android.net.Uri
+import android.os.Build
+import android.os.Handler
+import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import androidx.core.view.GravityCompat
@@ -116,6 +121,8 @@ class MainActivity : BaseActivity<MainPresenter>() {
 
     override fun createPresenter(): MainPresenter {
         hideStatusBarAndNavigationBar()
+        // 注册全面屏手势监听
+        registerFullScreenKeyMenus()
         return MainPresenter(this)
     }
 
@@ -139,7 +146,46 @@ class MainActivity : BaseActivity<MainPresenter>() {
                 startActivity(localIntent)
             }.start()
 //        setDrawerLeftEdgeSize(this,dl_contain_main,0.1F)
+
     }
+
+
+    private val mNavigationBarObserver = object : ContentObserver(Handler()) {
+        override fun onChange(selfChange: Boolean) {
+            Log.e("Test","ABC===============3")
+            if (ScreenUtils.navigationGestureEnabled(this@MainActivity)) {
+                //导航键隐藏了
+                Log.e("Test","ABC===============4")
+            } else {
+                //导航键显示了
+                Log.e("Test","ABC===============5")
+            }
+        }
+    }
+    private fun registerFullScreenKeyMenus() {
+        Log.e("Test","ABC=============== ${ScreenUtils.navigationGestureEnabled(this)}")
+
+        if (ScreenUtils.isNavigationBarAvailable(this)) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                contentResolver.registerContentObserver(
+                    Settings.System.getUriFor(ScreenUtils.getDeviceInfo()), true, mNavigationBarObserver
+                )
+            } else {
+                val uri = if (Build.BRAND.equals("VIVO", ignoreCase = true)
+                    || Build.BRAND.equals("OPPO", ignoreCase = true)
+                ) {
+                    Log.e("Test","ABC===============1")
+                    Settings.Global.getUriFor(ScreenUtils.getDeviceInfo())
+                } else {
+                    Log.e("Test","ABC===============2")
+                    Settings.Global.getUriFor(ScreenUtils.getDeviceInfo())
+                }
+
+                contentResolver.registerContentObserver(uri,true,mNavigationBarObserver)
+            }
+        }
+    }
+
 
     override fun bindEvent() {
         // 打开抽屉
@@ -148,7 +194,7 @@ class MainActivity : BaseActivity<MainPresenter>() {
             RxCodeManager.RX_CODE_OPEN_DRAWER_LAYOUT
         ) { dl_contain_main.openDrawer(GravityCompat.START) })
 
-        RxView.setOnClickListeners(this,cl_left_menu_header)
+        RxView.setOnClickListeners(this, cl_left_menu_header)
     }
 
     override fun onClick(view: View) {
@@ -156,8 +202,8 @@ class MainActivity : BaseActivity<MainPresenter>() {
             cl_left_menu_header -> {
                 dl_contain_main.closeDrawer(GravityCompat.START)
                 window.decorView.postDelayed({
-                    startActivity(Intent(this@MainActivity,LoginActivity::class.java))
-                },350)
+                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                }, 350)
             }
         }
     }

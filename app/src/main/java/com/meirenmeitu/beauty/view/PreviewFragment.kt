@@ -10,6 +10,7 @@ import com.meirenmeitu.library.dragview.DragFragment
 import com.meirenmeitu.library.dragview.PinchImageView
 import com.meirenmeitu.library.utils.Constants
 import com.meirenmeitu.library.utils.ImageLoader
+import com.meirenmeitu.library.utils.ScreenUtils
 
 /**
  *  浏览图片/视频
@@ -24,17 +25,17 @@ class PreviewFragment : DragFragment() {
 
     override fun getDragView(): View? {
         return if (view == null) null else view.findViewById(R.id.dragview)
-//        return if (view == null) null else view.findViewById(R.id.cl_root_preview)
+
     }
 
     override fun initView() {
         dragView = view.findViewById(R.id.dragview) as PinchImageView
         data?.let {
             val image = it as ImageBean
-            Log.e("Test","Drag======= ${Constants.BASE_URL.plus(image.imageId).plus("/").plus(image.imageUrl)}")
-            dragView?.let {
+            Log.e("Test", "Drag======= ${ScreenUtils.hasNavigationBar(activity!!)}")
+            dragView?.let { view ->
                 ImageLoader.loadWithDrawableCenterCropTransition(
-                    it as AppCompatImageView,
+                    view as AppCompatImageView,
                     Constants.BASE_URL.plus(image.imageId).plus("/")
                         .plus(image.imageUrl),
                     R.drawable.logo
