@@ -1,0 +1,4 @@
+
+# 添加jitpack.yml文件，用来规范jitpack上的jdk版本
+jdk:
+  - oraclejdk8
