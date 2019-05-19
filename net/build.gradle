@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
 
 // 2. 上传 jitpack.io需要的配置
 apply plugin: 'com.github.dcendents.android-maven' // 必加
-group='com.github.Jooyer'// 比加,com.github.<用户名>,如 https://github.com/Jooyer/Beauty,则是 com.github.Jooyer
+// group='com.github.Jooyer'// 比加,com.github.<用户名>,如 https://github.com/Jooyer/Beauty,则是 com.github.Jooyer
 
 
 dependencies {
