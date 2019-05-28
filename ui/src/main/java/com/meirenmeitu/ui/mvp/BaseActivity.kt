@@ -1,20 +1,15 @@
 package com.meirenmeitu.ui.mvp
 
-import android.content.IntentFilter
-import android.net.NetworkInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import ccom.meirenmeitu.ui.network.NetStateChangeObserver
 import com.meirenmeitu.library.rxbind.RxView
-import com.meirenmeitu.library.utils.Constants
 import com.meirenmeitu.library.utils.StatusBarUtil
-import com.meirenmeitu.ui.R
 import com.meirenmeitu.net.network.NetWorkReceiver
-import com.meirenmeitu.net.network.NetworkType
+import com.meirenmeitu.ui.R
 import com.meirenmeitu.ui.state.OnRetryListener
 import com.meirenmeitu.ui.state.StatusManager
 import io.reactivex.disposables.CompositeDisposable
@@ -114,7 +109,9 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
 
     override fun finish() {
         super.finish()
-        overridePendingTransition(R.anim.act_bottom_in, R.anim.act_bottom_out)
+        if (useStartAnim()) {
+            overridePendingTransition(R.anim.act_bottom_in, R.anim.act_bottom_out)
+        }
     }
 
     override fun onDestroy() {
