@@ -48,6 +48,18 @@ object ImageLoader {
             .into(imageView)
     }
 
+    fun loadImgWithCenterCropAndNoPlaceHolder(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .centerCrop()
+            )
+            .into(imageView)
+    }
+
+
     fun loadImgWithCenterCropMatchWidth(imageView: ImageView, path: String) {
         Glide.with(imageView.context.applicationContext)
             .load(path)
@@ -297,6 +309,18 @@ object ImageLoader {
                     .priority(Priority.HIGH)
                     .placeholder(drawable)
                     .error(drawable)
+                    .centerCrop()
+            ).into(imageView)
+
+    }
+
+    fun loadWithDrawableCenterCropTransitionAndNoPlaceHolder(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
                     .centerCrop()
             ).into(imageView)
 

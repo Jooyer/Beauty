@@ -169,6 +169,14 @@ class CustomToolbar(context: Context, attr: AttributeSet, defStyleAttr: Int) :
             tv_left_name_menu.setTextColor(leftTextColor)
         }
 
+        if (leftTextVisible) {
+            tv_left_name_menu.setOnClickListener {
+                if (context is Activity) {
+                    context.finish()
+                }
+            }
+        }
+
         val leftTextLp: RelativeLayout.LayoutParams = tv_left_name_menu.layoutParams as LayoutParams
         leftTextLp.leftMargin = leftTextLeftMargin
         tv_left_name_menu.layoutParams = leftTextLp

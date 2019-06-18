@@ -2,12 +2,13 @@ package com.meirenmeitu.beauty.view
 
 
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.util.SparseArray
 import android.view.View
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.util.set
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
@@ -146,16 +147,27 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         )
 
         val adapter = object : CommonAdapter<ImageBean>(mActivity, R.layout.item_image_category, mImages) {
+            private val location = Rect()
             override fun convert(holder: ViewHolder, bean: ImageBean, position: Int) {
-                val imageView = holder.getView<ImageView>(R.id.iv_content_item_category)
+                val imageView = holder.getView<AppCompatImageView>(R.id.iv_content_item_category)
                 holder.getView<TextView>(R.id.tv_content_item_title).text = bean.imageName
                 holder.getView<TextView>(R.id.tv_content_item_like).text = "${bean.likeCount}"
-                holder.getView<TextView>(R.id.tv_content_item_count).text = MessageFormat.format("{0}P",bean.seriesCount)
+                holder.getView<TextView>(R.id.tv_content_item_count).text =
+                    MessageFormat.format("{0}P", bean.seriesCount)
+
+
+                location.setEmpty()
+                rv_root_category.getGlobalVisibleRect(location)
 
                 val lp = imageView.layoutParams
                 lp.width = DensityUtils.getWindowSize(mActivity).widthPixels / 2 - DensityUtils.dpToPx(2)
-                lp.height = (lp.width / MMKV.defaultMMKV().decodeFloat(Constants.KEY_WIDTH_HEIGHT_RATE,1.0F)).toInt()
+                val rate = lp.width * 1.0F / location.right
+                lp.height = (rate * location.bottom).toInt()
                 imageView.layoutParams = lp
+
+                if (0 == position) {
+                    MMKV.defaultMMKV().encode(Constants.KEY_WIDTH_HEIGHT_RATE, rate)
+                }
 
                 val param = holder.itemView.layoutParams as RecyclerView.LayoutParams
                 param.height = lp.height + DensityUtils.dpToPx(45)
@@ -163,7 +175,7 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 
                 holder.itemView.tag = imageView
                 list_viewholder[position] = holder
-                ImageLoader.loadImgWithCenterCrop(
+                ImageLoader.loadImgWithCenterCropAndNoPlaceHolder(
                     imageView,
                     Constants.BASE_URL.plus(bean.imageId).plus("/")
                         .plus(bean.imageUrl.split("@@")[0])
@@ -190,12 +202,21 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         val urls = imageBean.imageUrl.split("@@")
         urls.forEach {
             listfragemnt.add(PreviewFragment::class.java)
-            val image = ImageBean(imageBean.imageId,imageBean.imageName,it,imageBean.imageType,
-                imageBean.collectCount,imageBean.likeCount,imageBean.seriesCount,imageBean.createTime,imageBean.updateTime)
+            val image = ImageBean(
+                imageBean.imageId,
+                imageBean.imageName,
+                it,
+                imageBean.imageType,
+                imageBean.collectCount,
+                imageBean.likeCount,
+                imageBean.seriesCount,
+                imageBean.createTime,
+                imageBean.updateTime
+            )
             mSeries.add(image)
         }
 
-        Log.e("Test","openPreview============ ${listfragemnt.size}")
+        Log.e("Test", "openPreview============ ${listfragemnt.size}")
         PreviewActivity.startPreviewActivity(mActivity, position, object : OnDataListener {
             override val listView: ArrayList<View>
                 get() = (0 until list_viewholder.size()).mapTo(ArrayList()) {
