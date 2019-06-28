@@ -45,6 +45,7 @@ class DataResponseBodyConverter<T>(private val adapter: TypeAdapter<T>, private 
             val msg = jsonObj.getAsJsonPrimitive(annotation.errorMsgKey).asString
 
             if (annotation.successCode != rspCode) {
+                json.addProperty(annotation.rspCodeKey,rspCode)
                 when (rspCode) { // 根据不同错误码,返回不同错误提示
                     404 -> {
                         json.addProperty(annotation.errorMsgKey,"地址不正确...")
@@ -56,6 +57,10 @@ class DataResponseBodyConverter<T>(private val adapter: TypeAdapter<T>, private 
                     }
                     603 -> {
                         json.addProperty(annotation.errorMsgKey,"登录过期...")
+                        return adapter.fromJsonTree(json)
+                    }
+                    else -> {
+                        json.addProperty(annotation.errorMsgKey,msg)
                         return adapter.fromJsonTree(json)
                     }
                 }

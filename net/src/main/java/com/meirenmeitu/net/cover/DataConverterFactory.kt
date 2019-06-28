@@ -47,11 +47,25 @@ class DataConverterFactory(private val gson: Gson) : Converter.Factory() {
 
     }
 
-    override fun requestBodyConverter(type: Type, parameterAnnotations: Array<out Annotation>,
+    override fun requestBodyConverter(type: Type, annotations: Array<out Annotation>,
                                       methodAnnotations: Array<out Annotation>, retrofit: Retrofit): Converter<*, RequestBody>? {
-        val adapter = gson.getAdapter(TypeToken.get(type))
-        return DataRequestBodyConverter(adapter,gson)
+
+        var annotation: TypeBean? = null
+        annotations.forEach {
+            when (it){
+                is TypeBean ->{
+                    annotation = it
+                }
+            }
+        }
+
+        return when (annotation){
+            null -> super.requestBodyConverter(type, annotations, methodAnnotations, retrofit)
+            else -> {
+                val adapter = gson.getAdapter(TypeToken.get(type))
+                 DataRequestBodyConverter(adapter,gson)
+            }
+        }
     }
-
-
+    
 }
