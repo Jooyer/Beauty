@@ -1,0 +1,287 @@
+package com.meirenmeitu.beauty.view
+
+
+import android.graphics.Color
+import android.graphics.Rect
+import android.os.Bundle
+import android.util.Log
+import android.util.SparseArray
+import android.view.View
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.util.set
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.meirenmeitu.base.adapter.CommonAdapter
+import com.meirenmeitu.base.adapter.MultiItemTypeAdapter
+import com.meirenmeitu.base.adapter.ViewHolder
+import com.meirenmeitu.base.other.NormalDecoration
+import com.meirenmeitu.beauty.R
+import com.meirenmeitu.beauty.bean.ImageBean
+import com.meirenmeitu.beauty.presenter.CategoryPresenter
+import com.meirenmeitu.library.dragview.OnDataListener
+import com.meirenmeitu.library.refresh.BounceCallBack
+import com.meirenmeitu.library.refresh.EventForwardingHelper
+import com.meirenmeitu.library.refresh.NormalBounceHandler
+import com.meirenmeitu.library.refresh.footer.DefaultFooter
+import com.meirenmeitu.library.refresh.header.DefaultHeader
+import com.meirenmeitu.library.utils.Constants
+import com.meirenmeitu.library.utils.DensityUtils
+import com.meirenmeitu.library.utils.ImageLoader
+import com.meirenmeitu.library.utils.JSnackBar
+import com.meirenmeitu.ui.mvp.BaseFragment
+import com.tencent.mmkv.MMKV
+import kotlinx.android.synthetic.main.fragment_category.*
+import java.text.MessageFormat
+
+
+/**
+ * 类别界面
+ */
+class CategoryFragment : BaseFragment<CategoryPresenter>() {
+    private val mImages = ArrayList<ImageBean>()
+    private val mSeries = ArrayList<ImageBean>()
+    internal val listfragemnt = java.util.ArrayList<Class<*>>()
+    private var list_viewholder = SparseArray<ViewHolder>()
+
+    private var currentPage = 1L
+    private var totalPage = 0L
+
+    companion object {
+        val TAG = CategoryFragment::class.java.simpleName
+        fun newInstance(type: Int): CategoryFragment {
+            val fragment = CategoryFragment()
+            val bundle = Bundle()
+            bundle.putInt(TAG, type)
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
+    override fun createPresenter() = CategoryPresenter(this)
+
+    override fun getLayoutId() = R.layout.fragment_category
+
+    override fun setLogic() {
+//        val random = Random()
+//        val color = Color.rgb(
+//            random.nextInt(256),
+//            random.nextInt(256),
+//            random.nextInt(256)
+//        )
+//        rv_root_category.setBackgroundColor(color)
+
+//        rv_root_category.postDelayed({
+//            setAdapter()
+//        },400)
+
+        //设置滚动冲突的控制类
+        bl_container_category.setBounceHandler(NormalBounceHandler(), rv_root_category)
+        //设置刷新头，null意味着没有刷新头，不调用该函数意为着空
+        bl_container_category.setHeaderView(DefaultHeader(mActivity), cl_container_category)
+        bl_container_category.setFooterView(DefaultFooter(mActivity), cl_container_category)
+
+        //自定义事件分发处理
+        bl_container_category.setEventForwardingHelper(EventForwardingHelper { downX, downY, moveX, moveY ->
+            true
+        })
+
+        bl_container_category.setBounceCallBack(object : BounceCallBack {
+            //刷新回调
+            override fun startRefresh() {
+                arguments?.getInt(TAG, 0).let {
+                    mPresenter.getImages(it ?: 0, 1, Constants.PAGE_INFO_SIZE_PRE_PAGE_10)
+                }
+                bl_container_category.setNoMoreData(false)
+                // TODO 如下测试某个系列的一张图
+//                mPresenter.getOneImageInSeries("176eca57a37f4de8936c401d1b2afa42", "002")
+
+            }
+
+            override fun startLoadingMore() {
+                currentPage++
+                if (currentPage <= totalPage) {
+                    arguments?.getInt(TAG, 0).let {
+                        mPresenter.getImages(it ?: 0, currentPage, 10)
+                    }
+                }
+            }
+        })
+    }
+
+    override fun onFirstUserVisible() {
+        setAdapter()
+        bl_container_category.autoRefresh()
+        mPresenter.mImages.observe(this, Observer {
+            totalPage = Math.ceil(it.total.toDouble() / Constants.PAGE_INFO_SIZE_PRE_PAGE_10).toLong()
+            if (1L == currentPage) {
+                mImages.clear()
+            }
+            mImages.addAll(it.list)
+
+            rv_root_category.adapter?.notifyDataSetChanged()
+            bl_container_category.setRefreshCompleted()
+            bl_container_category.setLoadingMoreCompleted()
+
+            if (currentPage == totalPage) {
+                bl_container_category.setNoMoreData(true)
+            }
+        })
+
+        mPresenter.mImage.observe(this, Observer {
+            Log.e("Test", "===============获取一张图 ")
+            mImages.clear()
+            mImages.add(it)
+            rv_root_category.adapter?.notifyDataSetChanged()
+            bl_container_category.setRefreshCompleted()
+        })
+
+    }
+
+    private fun setAdapter() {
+        rv_root_category.layoutManager = GridLayoutManager(mActivity, 2)
+
+        rv_root_category.addItemDecoration(
+            NormalDecoration(mActivity, DensityUtils.dpToPx(4), Color.WHITE)
+        )
+
+        val adapter = object : CommonAdapter<ImageBean>(mActivity, R.layout.item_image_category, mImages) {
+            private val location = Rect()
+            override fun convert(holder: ViewHolder, bean: ImageBean, position: Int) {
+                val imageView = holder.getView<AppCompatImageView>(R.id.iv_content_item_category)
+                holder.getView<TextView>(R.id.tv_content_item_title).text = bean.imageName
+                holder.getView<TextView>(R.id.tv_content_item_like).text = "${bean.likeCount}"
+                holder.getView<TextView>(R.id.tv_content_item_count).text =
+                    MessageFormat.format("{0}P", bean.seriesCount)
+
+
+                location.setEmpty()
+                rv_root_category.getGlobalVisibleRect(location)
+
+                val lp = imageView.layoutParams
+                lp.width = DensityUtils.getWindowSize(mActivity).widthPixels / 2 - DensityUtils.dpToPx(2)
+                val rate = lp.width * 1.0F / location.right
+                lp.height = (rate * location.bottom).toInt()
+                imageView.layoutParams = lp
+
+                if (0 == position) {
+                    MMKV.defaultMMKV().encode(Constants.KEY_WIDTH_HEIGHT_RATE, rate)
+                }
+
+                val param = holder.itemView.layoutParams as RecyclerView.LayoutParams
+                param.height = lp.height + DensityUtils.dpToPx(45)
+                holder.itemView.layoutParams = param
+
+                holder.itemView.tag = imageView
+                list_viewholder[position] = holder
+                ImageLoader.loadImgWithCenterCropAndNoPlaceHolder(
+                    imageView,
+                    Constants.BASE_URL.plus(bean.imageId).plus("/")
+                        .plus(bean.imageUrl.split("@@")[0])
+                )
+            }
+
+        }
+
+        adapter.setOnItemClickListener(object : MultiItemTypeAdapter.OnItemClickListener {
+            override fun onItemClick(view: View, holder: RecyclerView.ViewHolder, position: Int) {
+                openPreview(position)
+            }
+        })
+
+        rv_root_category.adapter = adapter
+    }
+
+    // https://www.jianshu.com/p/bf2e6e5a3ba0
+    fun openPreview(position: Int) {
+        listfragemnt.clear()
+        mSeries.clear()
+        // 点击封面其实里面包含了一个文件夹,里面有多个图片
+        val imageBean = mImages[position]
+        val urls = imageBean.imageUrl.split("@@")
+        urls.forEach {
+            listfragemnt.add(PreviewFragment::class.java)
+            val image = ImageBean(
+                imageBean.imageId,
+                imageBean.imageName,
+                it,
+                imageBean.imageType,
+                imageBean.collectCount,
+                imageBean.likeCount,
+                imageBean.seriesCount,
+                imageBean.createTime,
+                imageBean.updateTime
+            )
+            mSeries.add(image)
+        }
+
+        Log.e("Test", "openPreview============ ${listfragemnt.size}")
+        PreviewActivity.startPreviewActivity(mActivity, position, object : OnDataListener {
+            override val listView: ArrayList<View>
+                get() = (0 until list_viewholder.size()).mapTo(ArrayList()) {
+                    list_viewholder[it]?.itemView?.tag as View
+                }
+            override val listData: ArrayList<ImageBean>
+                get() = mSeries
+            override val listFragmentClass: ArrayList<Class<*>>
+                get() = listfragemnt
+
+            override fun onPageSelected(position: Int) {
+//                val manager = rv_root_category.layoutManager as GridLayoutManager
+//                if (position < manager.findFirstVisibleItemPosition() || position > manager.findLastVisibleItemPosition()) {
+//                    rv_root_category.smoothScrollToPosition(position)
+//                }
+            }
+
+            override fun onBackPressed(): Boolean = true
+
+            override fun init() {
+
+            }
+        })
+
+
+//        DragViewActivity.startActivity(mActivity, 0, object : OnDataListener {
+//            override fun getListView(): ArrayList<View> {
+//                return (0 until list_viewholder.size).mapTo(ArrayList()) {
+//                    list_viewholder[it]?.itemView?.tag as View
+//                }
+//            }
+//
+//            override fun getListData(): java.util.ArrayList<Any> {
+//                return java.util.ArrayList(imageUrls)
+//            }
+//
+//            override fun getListFragmentClass(): java.util.ArrayList<Class<*>> {
+//                return listfragemnt
+//            }
+//
+//            override fun onPageSelected(position: Int) {
+//                val manager = rv_root_category.layoutManager as GridLayoutManager
+//                if (position < manager.findFirstVisibleItemPosition() || position > manager.findLastVisibleItemPosition()) {
+//                    rv_root_category.smoothScrollToPosition(position)
+//                }
+//            }
+//
+//            override fun onBackPressed(): Boolean {
+//                return true
+//            }
+//
+//            override fun init() {
+//
+//            }
+//
+//        })
+    }
+
+    override fun showError(message: String) {
+        JSnackBar.Builder().attachView(cl_container_category)
+            .message("message")
+            .default()
+            .build()
+            .default()
+            .show()
+    }
+
+}

@@ -1,0 +1,25 @@
+<resources>
+    <!--<string name="app_name">hhh</string>-->
+    <string name="app_name">美人美图</string>
+
+    <string name="comm_collect">我的收藏</string>
+    <string name="comm_download">我的下载</string>
+    <string name="comm_appreciate">最新欣赏</string>
+    <string name="comm_feedback">意见反馈</string>
+    <string name="comm_submit_feedback">我的反馈</string>
+
+    <string-array name="home_category">
+        <item>书籍</item>
+        <item>书本</item>
+        <item>书友</item>
+        <item>相关</item>
+        <item>书籍</item>
+        <item>书本</item>
+        <item>书友</item>
+        <item>相关</item>
+    </string-array>
+
+
+    <string name="get_code">获取验证码</string>
+    <string name="code_replay">%ds后重新发送</string>
+</resources>

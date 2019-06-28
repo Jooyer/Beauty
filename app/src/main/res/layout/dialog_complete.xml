@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_200"
+        android:layout_marginStart="@dimen/padding_40"
+        android:layout_marginEnd="@dimen/padding_40"
+        android:background="@drawable/white_rect_solid_r10"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+
+        <!-- 昵称 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_56"
+            android:layout_marginTop="@dimen/padding_10"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/padding_14"
+                android:gravity="center"
+                android:padding="@dimen/padding_10"
+                android:text="昵称"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/text_size_14"
+                />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="@dimen/height_50"
+                android:layout_weight="1"
+                >
+
+                <com.meirenmeitu.base.define.LimitEditText
+                    android:id="@+id/et_nickname_input_login"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@null"
+                    android:hint="请输入昵称"
+                    android:maxLength="32"
+                    android:singleLine="true"
+                    android:gravity="center_vertical"
+                    android:text=""
+                    android:textColor="@color/main_theme_color"
+                    android:textColorHint="@color/color_999999"
+                    android:textSize="@dimen/text_size_14"
+                    />
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/iv_clean_nickname_login"
+                android:layout_width="@dimen/width_40"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/padding_12"
+                android:padding="@dimen/padding_12"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_clear_black"
+                android:visibility="visible"
+                />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/divider_2"
+            android:layout_marginStart="@dimen/padding_12"
+            android:layout_marginEnd="@dimen/padding_20"
+            android:background="@color/color_666666"
+            />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_50"
+            android:layout_marginTop="@dimen/padding_5"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="@dimen/padding_10"
+                android:gravity="center"
+                android:padding="@dimen/padding_10"
+                android:text="性别"
+                android:textColor="@color/color_333333"
+                android:textSize="@dimen/text_size_14"
+                />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/rb_female_complete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@mipmap/ic_gray_female"
+                android:theme="@style/MyRadioButton"
+                />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/rb_male_complete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_20"
+                android:drawableEnd="@mipmap/ic_gray_male"
+                android:theme="@style/MyRadioButton"
+                />
+
+        </RadioGroup>
+
+        <Button
+            android:id="@+id/btn_submit_complete"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_40"
+            android:layout_marginStart="@dimen/padding_20"
+            android:layout_marginTop="@dimen/padding_20"
+            android:layout_marginEnd="@dimen/padding_20"
+            android:text="保存"
+            android:textColor="@color/color_write"
+            android:textSize="@dimen/text_size_16"
+            />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

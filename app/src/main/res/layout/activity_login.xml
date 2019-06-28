@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cl_root_login"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:background="@color/color_write"
+    >
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="@dimen/width_100"
+        android:layout_height="@dimen/height_100"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="@dimen/padding_75"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/ic_share_logo"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbarThumbVertical="@android:color/transparent"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_50"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/padding_200"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding_20"
+                    android:layout_marginEnd="@dimen/padding_10"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_phone_iphone_black"
+                    />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_40"
+                    android:layout_weight="1"
+                    >
+
+                    <EditText
+                        android:id="@+id/et_mobile_input_login"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:digits="0123456789"
+                        android:hint="输入账号"
+                        android:inputType="phone"
+                        android:maxLength="11"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textColor="@color/main_theme_color"
+                        android:textColorHint="@color/color_999999"
+                        android:textSize="@dimen/text_size_14"
+                        />
+
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <ImageView
+                    android:id="@+id/iv_clean_phone_login"
+                    android:layout_width="@dimen/width_40"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/padding_12"
+                    android:padding="@dimen/padding_12"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black"
+                    android:visibility="visible"
+                    />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_2"
+                android:layout_marginStart="@dimen/padding_20"
+                android:layout_marginEnd="@dimen/padding_20"
+                android:background="@color/color_666666"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_50"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/padding_20"
+                    android:layout_marginTop="@dimen/padding_2"
+                    android:layout_marginEnd="@dimen/padding_10"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_lock_outline_black"
+                    />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/height_40"
+                    android:layout_weight="1">
+
+                    <EditText
+                        android:id="@+id/et_password_input_login"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@null"
+                        android:digits="0123456789"
+                        android:hint="输入验证码"
+                        android:inputType="phone"
+                        android:maxLength="6"
+                        android:singleLine="true"
+                        android:text=""
+                        android:textColor="@color/main_theme_color"
+                        android:textColorHint="@color/color_999999"
+                        android:textSize="@dimen/text_size_14"
+                        />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <ImageView
+                    android:id="@+id/iv_clean_code_login"
+                    android:layout_width="@dimen/width_40"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/padding_2"
+                    android:padding="@dimen/padding_12"
+                    android:scaleType="centerInside"
+                    android:src="@drawable/ic_clear_black"
+                    android:visibility="visible"
+                    />
+
+                <View
+                    android:layout_width="@dimen/divider_2"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/padding_14"
+                    android:layout_marginBottom="@dimen/padding_14"
+                    android:background="@color/color_666666"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_get_code_login"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/padding_14"
+                    android:gravity="center"
+                    android:padding="@dimen/padding_10"
+                    android:text="获取验证码"
+                    android:textColor="@color/color_03A9F4"
+                    android:textSize="@dimen/text_size_12"
+                    />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/divider_2"
+                android:layout_marginStart="@dimen/padding_20"
+                android:layout_marginEnd="@dimen/padding_20"
+                android:background="@color/color_666666"
+                />
+
+            <Button
+                android:id="@+id/btn_submit_login"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_40"
+                android:layout_marginStart="@dimen/padding_20"
+                android:layout_marginTop="@dimen/padding_40"
+                android:layout_marginEnd="@dimen/padding_20"
+                android:text="下一步"
+                android:textColor="@color/color_write"
+                android:textSize="@dimen/text_size_16"
+                />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/service"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_40"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        >
+
+        <!--<TextView-->
+        <!--android:id="@+id/tv_get_code_login"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:gravity="center"-->
+        <!--android:padding="@dimen/padding_10"-->
+        <!--android:text="联系客服"-->
+        <!--android:textColor="@color/color_666666"-->
+        <!--android:textSize="@dimen/text_size_14"-->
+        <!--/>-->
+
+        <!--<View-->
+        <!--android:layout_width="@dimen/divider_2"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginBottom="@dimen/padding_10"-->
+        <!--android:layout_marginTop="@dimen/padding_10"-->
+        <!--android:background="@color/color_666666"-->
+        <!--/>-->
+
+        <TextView
+            android:id="@+id/tv_about_molue"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingStart="@dimen/padding_20"
+            android:paddingEnd="@dimen/padding_20"
+            android:text="@string/login_about_meirenmeitu"
+            android:textColor="@color/color_666666"
+            android:textSize="@dimen/text_size_14"
+            />
+    </LinearLayout>
+
+
+    <com.meirenmeitu.base.define.CustomToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:ct_left_image_drawable="@drawable/ic_left_black_back"
+        app:ct_view_background_color="@android:color/transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

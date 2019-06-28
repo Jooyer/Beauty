@@ -1,0 +1,429 @@
+package com.meirenmeitu.library.utils
+
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.widget.ImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.CustomViewTarget
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import com.meirenmeitu.library.R
+import java.io.File
+
+/**
+ * https://www.jianshu.com/p/aecd92515cea  --> glide4.7.1封装
+ * http://www.imooc.com/article/79104 --> Kotlin 下使用 Glide
+ *
+ *  占位图和过渡动画冲突解决方案
+ * DrawableCrossFadeFactory drawableCrossFadeFactory = new DrawableCrossFadeFactory.Builder(300).setCrossFadeEnabled(true).build();
+Glide.with(this)
+.load(URL_JPG)
+.apply(new RequestOptions().placeholder(R.drawable.ic_launcher))
+.transition(DrawableTransitionOptions.with(drawableCrossFadeFactory))
+.into(imageView);
+
+ *
+ * Created by Jooyer
+ * Date 2017/12/16
+ * Des  http://blog.csdn.net/u013005791/article/details/74532091  ,使用方法
+ */
+
+object ImageLoader {
+
+    fun loadImgWithCenterCrop(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .centerCrop()
+            )
+            .into(imageView)
+    }
+
+    fun loadImgWithCenterCropAndNoPlaceHolder(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .centerCrop()
+            )
+            .into(imageView)
+    }
+
+
+    fun loadImgWithCenterCropMatchWidth(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+//            .listener(object :RequestListener<Drawable>{
+//                override fun onLoadFailed(
+//                    e: GlideException?,
+//                    model: Any?,
+//                    target: Target<Drawable>?,
+//                    isFirstResource: Boolean
+//                ): Boolean {
+//                    return false
+//                }
+//
+//                override fun onResourceReady(
+//                    resource: Drawable,
+//                    model: Any?,
+//                    target: Target<Drawable>?,
+//                    dataSource: DataSource?,
+//                    isFirstResource: Boolean
+//                ): Boolean {
+//                    if (imageView.scaleType != ImageView.ScaleType.FIT_XY) {
+//                        imageView.scaleType = ImageView.ScaleType.FIT_XY
+//                    }
+////                    val params = imageView.layoutParams
+////                    val vw = imageView.width - imageView.paddingLeft -imageView.paddingRight
+////                    val scale = vw * 1.0F / resource.intrinsicWidth
+////                    val vh = Math.round(resource.intrinsicHeight * scale)
+////                    params.height = vh + imageView.paddingTop + imageView.paddingBottom
+////                    imageView.layoutParams = params
+//                    return false
+//                }
+//
+//            })
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+            )
+            .into(object : CustomViewTarget<ImageView,Drawable>(imageView){
+                override fun onLoadFailed(errorDrawable: Drawable?) {
+                }
+
+                override fun onResourceCleared(placeholder: Drawable?) {
+                }
+
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                    imageView.setImageDrawable(resource)
+                }
+
+            })
+    }
+
+    fun loadImgWithCenterCrop(imageView: ImageView, drawableId: Int) {
+        Glide.with(imageView.context.applicationContext)
+            .load(drawableId)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .centerCrop()
+            )
+            .into(imageView)
+    }
+
+    fun loadImgWithFitCenter(imageView: ImageView, drawableId: Int) {
+        Glide.with(imageView.context.applicationContext)
+            .load(drawableId)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .fitCenter()
+            )
+            .into(imageView)
+    }
+
+    fun loadImgWithFitCenter(imageView: ImageView, uri: Uri) {
+        Glide.with(imageView.context.applicationContext)
+            .load(uri)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+
+                    .fitCenter()
+            )
+            .into(imageView)
+    }
+
+
+    fun loadImgWithFitCenter(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .fitCenter()
+            )
+            .into(imageView)
+    }
+
+    fun loadImgWithFitXY(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .dontAnimate()
+                    .centerCrop()
+            )
+            .into(imageView)
+    }
+
+
+    fun loadImgWithFitCenter(imageView: ImageView, file: File) {
+        Glide.with(imageView.context.applicationContext)
+            .load(file)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .fitCenter()
+            )
+            .into(imageView)
+    }
+
+
+    fun loadImgWithFitCenter(imageView: ImageView, uri: Uri, drawable: Drawable) {
+        Glide.with(imageView.context.applicationContext)
+            .load(uri)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(drawable)
+                    .error(drawable)
+                    .fitCenter()
+            )
+            .into(imageView)
+    }
+
+
+    fun loadImgWithFitCenter(imageView: ImageView, path: String, drawable: Drawable) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+
+                    .placeholder(drawable)
+                    .error(drawable)
+                    .fitCenter()
+            )
+            .into(imageView)
+    }
+
+    fun loadImgWithFitCenter(imageView: ImageView, drawable: Drawable) {
+        Glide.with(imageView.context.applicationContext)
+            .load(drawable)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .fitCenter()
+            )
+            .into(imageView)
+    }
+
+
+    fun loadImgWithFitCenter(imageView: ImageView, file: File, drawable: Drawable) {
+        Glide.with(imageView.context.applicationContext)
+            .load(file)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .placeholder(drawable)
+                    .fitCenter()
+            )
+            .into(imageView)
+    }
+
+    fun loadCircleImg(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .dontAnimate()
+                    .centerCrop()
+                    .circleCrop()
+            )
+            .into(imageView)
+    }
+
+    fun loadCircleImg(imageView: ImageView, drawable: Drawable) {
+        Glide.with(imageView.context.applicationContext)
+            .load(drawable)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+
+                    .placeholder(R.drawable.logo)
+                    .error(R.drawable.logo)
+                    .dontAnimate()
+                    .centerCrop()
+                    .circleCrop()
+            )
+            .into(imageView)
+    }
+
+    fun loadImageToBitmap(imageView: ImageView, path: String, drawable: Drawable) {
+        Glide.with(imageView.context.applicationContext)
+            .asBitmap()
+            .load(path)
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(drawable)
+                    .error(drawable)
+                    .dontAnimate()
+            )
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    imageView.background = BitmapDrawable(imageView.resources, resource)
+                }
+            })
+    }
+
+    fun loadWithDrawableCenterCropTransition(imageView: ImageView, path: String, drawable: Int) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(drawable)
+                    .error(drawable)
+                    .centerCrop()
+            ).into(imageView)
+
+    }
+
+    fun loadWithDrawableCenterCropTransitionAndNoPlaceHolder(imageView: ImageView, path: String) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .centerCrop()
+            ).into(imageView)
+
+    }
+
+    fun loadWithDrawableCenterCropTransitionMatchWidth(imageView: ImageView, path: String, drawable: Int) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+//            .listener(object :RequestListener<Drawable>{
+//                override fun onLoadFailed(
+//                    e: GlideException?,
+//                    model: Any?,
+//                    target: Target<Drawable>?,
+//                    isFirstResource: Boolean
+//                ): Boolean {
+//                    return false
+//                }
+//
+//                override fun onResourceReady(
+//                    resource: Drawable,
+//                    model: Any?,
+//                    target: Target<Drawable>?,
+//                    dataSource: DataSource?,
+//                    isFirstResource: Boolean
+//                ): Boolean {
+//                    if (imageView.scaleType != ImageView.ScaleType.FIT_XY) {
+//                        imageView.scaleType = ImageView.ScaleType.FIT_XY
+//                    }
+////                    val params = imageView.layoutParams
+////                    val vw = imageView.width - imageView.paddingLeft -imageView.paddingRight
+////                    val scale = vw * 1.0F / resource.intrinsicWidth
+////                    val vh = Math.round(resource.intrinsicHeight * scale)
+////                    params.height = vh + imageView.paddingTop + imageView.paddingBottom
+////                    imageView.layoutParams = params
+//                    return false
+//                }
+//
+//            })
+            .apply(
+                RequestOptions()
+                    .priority(Priority.HIGH)
+                    .placeholder(drawable)
+                    .error(drawable)
+            )
+            .into(object : CustomViewTarget<ImageView,Drawable>(imageView){
+            override fun onLoadFailed(errorDrawable: Drawable?) {
+            }
+
+            override fun onResourceCleared(placeholder: Drawable?) {
+            }
+
+            override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                imageView.setImageDrawable(resource)
+            }
+
+        })
+    }
+
+
+    fun loadWithDrawableFitCenterTransition(imageView: ImageView, path: String, drawable: Int) {
+        Glide.with(imageView.context.applicationContext)
+            .load(path)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .apply(
+                RequestOptions()
+//                    .override(imageView.width/2,imageView.height/2)
+                    .priority(Priority.HIGH)
+                    .fitCenter()
+                    .placeholder(drawable)
+                    .error(drawable)
+            ).into(imageView)
+
+    }
+
+}
+/**
+
+RequestOptions options =new RequestOptions()
+
+.placeholder(R.mipmap.ic_launcher)//加载成功之前占位图
+
+.error(R.mipmap.ic_launcher)//加载错误之后的错误图
+
+.override(400,400)//指定图片的尺寸
+
+//指定图片的缩放类型为fitCenter （等比例缩放图片，宽或者是高等于ImageView的宽或者是高。）
+
+.fitCenter()
+
+//指定图片的缩放类型为centerCrop （等比例缩放图片，直到图片的狂高都大于等于ImageView的宽度，然后截取中间的显示。）
+
+.centerCrop()
+
+.circleCrop()//指定图片的缩放类型为centerCrop （圆形）
+
+.skipMemoryCache(true)//跳过内存缓存
+
+.diskCacheStrategy(DiskCacheStrategy.ALL)//缓存所有版本的图像
+
+.diskCacheStrategy(DiskCacheStrategy.NONE)//跳过磁盘缓存
+
+.diskCacheStrategy(DiskCacheStrategy.DATA)//只缓存原来分辨率的图片
+
+.diskCacheStrategy(DiskCacheStrategy.RESOURCE)//只缓存最终的图片 ;
+
+ **/

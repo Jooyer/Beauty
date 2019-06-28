@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.meirenmeitu.library.dragview.DragViewLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/dragLayout"
+        tools:context=".view.PreviewActivity"
+        >
+
+    <!--<com.meirenmeitu.base.define.CustomToolbar-->
+    <!--android:id="@+id/ct_toolbar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--app:ct_center_text_info="@string/app_name"-->
+    <!--app:ct_view_background_color="@android:color/transparent"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--/>-->
+
+    <ImageView
+            android:id="@+id/iv_black_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+
+    <com.meirenmeitu.library.dragview.DragViewPage
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+    />
+
+    <!--<androidx.recyclerview.widget.RecyclerView-->
+    <!--android:id="@+id/rv_content_preview"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="0dp"-->
+    <!--tools:context=".view.CategoryFragment"-->
+    <!--app:layout_constraintLeft_toLeftOf="parent"-->
+    <!--app:layout_constraintRight_toRightOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@id/ct_toolbar"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--/>-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_bottom_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_60"
+            android:layout_alignParentBottom="true"
+            >
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_like_image"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_45"
+                android:layout_marginEnd="@dimen/padding_14"
+                app:layout_constraintEnd_toStartOf="@id/tv_collect_image"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:drawableStart="@mipmap/ic_launcher"
+                android:text="23445"
+                android:padding="@dimen/padding_10"
+                />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_collect_image"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_45"
+                android:layout_marginEnd="@dimen/padding_14"
+                app:layout_constraintEnd_toStartOf="@id/tv_down_image"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:drawableStart="@mipmap/ic_launcher"
+                android:text="46115"
+                android:padding="@dimen/padding_10"
+                />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_down_image"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_45"
+                android:layout_marginEnd="@dimen/padding_14"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:drawableStart="@mipmap/ic_launcher"
+                android:text=""
+                android:padding="@dimen/padding_10"
+                />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.meirenmeitu.library.dragview.DragViewLayout>

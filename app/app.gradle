@@ -1,0 +1,65 @@
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.meirenmeitu.beauty"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+    }
+
+    //2. 将 so 放在 jni 文件夹下时
+    sourceSets {
+        main {
+            jni.srcDirs = []
+            jniLibs.srcDirs = ['src/main/jniLibs']
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file("../Beauty.jks")
+            storePassword "Beauty2019"
+            keyAlias "Beauty"
+            keyPassword "Beauty2019"
+        }
+
+        debug {
+            storeFile file("../Beauty.jks")
+            storePassword "Beauty2019"
+            keyAlias "Beauty"
+            keyPassword "Beauty2019"
+        }
+    }
+
+
+    buildTypes {
+        debug {
+            // 关闭混淆压缩
+            minifyEnabled false
+            // 关闭内存对齐
+            zipAlignEnabled false
+            // 移除无用的资源文件
+            shrinkResources false
+            // 是否开启 Release 可以查看日志
+            debuggable true
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-gsy.pro'
+        }
+        release {
+            // 关闭混淆压缩
+            minifyEnabled true
+            // 关闭内存对齐
+            zipAlignEnabled true
+            // 移除无用的资源文件
+            shrinkResources true
+            // 是否开启 Release 可以查看日志
+            debuggable false
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro', 'proguard-gsy.pro'
+        }
+    }
+}
