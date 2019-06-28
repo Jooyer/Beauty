@@ -10,8 +10,8 @@ import retrofit2.Retrofit
 import java.lang.reflect.Type
 
 
-
 /** https://blog.csdn.net/qq_22804827/article/details/61915760
+ * https://gitee.com/yang_share/codes/hckdsjf0ur5e96xy23lzi14
  * Desc: 自定义工厂方法解析注解的数据
  * Author: Jooyer
  * Date: 2018-07-30
@@ -21,51 +21,62 @@ import java.lang.reflect.Type
 class DataConverterFactory(private val gson: Gson) : Converter.Factory() {
 
     companion object {
-        val gson = GsonBuilder().registerTypeAdapterFactory(NullStringToEmptyAdapterFactory()).create()
+        val gson = GsonBuilder()
+            .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())
+                // https://blog.csdn.net/winter13292/article/details/51355046 (Gson 过滤字段的几种方法)
+            .excludeFieldsWithoutExposeAnnotation()
+            .create()
+
         fun create(): DataConverterFactory {
             return DataConverterFactory(gson)
         }
     }
 
     // //响应
-    override fun responseBodyConverter(type: Type, annotations: Array<out Annotation>, retrofit: Retrofit): Converter<ResponseBody, *>? {
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit
+    ): Converter<ResponseBody, *>? {
         val adapter = gson.getAdapter(TypeToken.get(type))
         println("responseBodyConverter===========${TypeToken.get(type).rawType}")
         var annotation: TypeData? = null
         annotations.forEach {
-            when (it){
-                is TypeData ->{
+            when (it) {
+                is TypeData -> {
                     annotation = it
                 }
             }
         }
 
-        return when (annotation){
+        return when (annotation) {
             null -> super.responseBodyConverter(type, annotations, retrofit)
-            else -> DataResponseBodyConverter(adapter,gson,annotation!!)
+            else -> DataResponseBodyConverter(adapter, gson, annotation!!)
         }
 
     }
 
-    override fun requestBodyConverter(type: Type, annotations: Array<out Annotation>,
-                                      methodAnnotations: Array<out Annotation>, retrofit: Retrofit): Converter<*, RequestBody>? {
+    override fun requestBodyConverter(
+        type: Type, annotations: Array<out Annotation>,
+        methodAnnotations: Array<out Annotation>, retrofit: Retrofit
+    ): Converter<*, RequestBody>? {
 
         var annotation: TypeBean? = null
         annotations.forEach {
-            when (it){
-                is TypeBean ->{
+            when (it) {
+                is TypeBean -> {
                     annotation = it
                 }
             }
         }
 
-        return when (annotation){
+        return when (annotation) {
             null -> super.requestBodyConverter(type, annotations, methodAnnotations, retrofit)
             else -> {
                 val adapter = gson.getAdapter(TypeToken.get(type))
-                 DataRequestBodyConverter(adapter,gson)
+                DataRequestBodyConverter(adapter, gson)
             }
         }
     }
-    
+
 }

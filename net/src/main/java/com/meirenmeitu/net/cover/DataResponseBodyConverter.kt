@@ -40,30 +40,31 @@ class DataResponseBodyConverter<T>(private val adapter: TypeAdapter<T>, private 
             val rspStr = value.string()
             val jsonObj = gson.fromJson(rspStr, JsonObject::class.java)
                     ?: throw IllegalArgumentException("Json 数据异常")
-            val json = JsonObject()
+//            val json = JsonObject()
             val rspCode = jsonObj.getAsJsonPrimitive(annotation.rspCodeKey).asInt
             val msg = jsonObj.getAsJsonPrimitive(annotation.errorMsgKey).asString
 
             if (annotation.successCode != rspCode) {
-                json.addProperty(annotation.rspCodeKey,rspCode)
-                when (rspCode) { // 根据不同错误码,返回不同错误提示
-                    404 -> {
-                        json.addProperty(annotation.errorMsgKey,"地址不正确...")
-                        return adapter.fromJsonTree(json)
-                    }
-                    504 -> {
-                        json.addProperty(annotation.errorMsgKey,"本地没有缓存...")
-                        return adapter.fromJsonTree(json)
-                    }
-                    603 -> {
-                        json.addProperty(annotation.errorMsgKey,"登录过期...")
-                        return adapter.fromJsonTree(json)
-                    }
-                    else -> {
-                        json.addProperty(annotation.errorMsgKey,msg)
-                        return adapter.fromJsonTree(json)
-                    }
-                }
+//                json.addProperty(annotation.rspCodeKey,rspCode)
+                throw ApiException(rspCode,msg)
+//                when (rspCode) { // 根据不同错误码,返回不同错误提示
+//                    404 -> {
+//                        json.addProperty(annotation.errorMsgKey,"地址不正确...")
+//                        return adapter.fromJsonTree(json)
+//                    }
+//                    504 -> {
+//                        json.addProperty(annotation.errorMsgKey,"本地没有缓存...")
+//                        return adapter.fromJsonTree(json)
+//                    }
+//                    603 -> {
+//                        json.addProperty(annotation.errorMsgKey,"登录过期...")
+//                        return adapter.fromJsonTree(json)
+//                    }
+//                    else -> {
+//                        json.addProperty(annotation.errorMsgKey,msg)
+//                        return adapter.fromJsonTree(json)
+//                    }
+//                }
             }
 
             var jsonTree: T? = null
