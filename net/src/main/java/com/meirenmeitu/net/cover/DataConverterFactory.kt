@@ -56,13 +56,17 @@ class DataConverterFactory(private val gson: Gson) : Converter.Factory() {
 
     }
 
+    /**
+     * @param annotations  --> Service 请求方法参数的注解
+     * @param methodAnnotations  --> Service 请求方法的注解
+     */
     override fun requestBodyConverter(
         type: Type, annotations: Array<out Annotation>,
         methodAnnotations: Array<out Annotation>, retrofit: Retrofit
     ): Converter<*, RequestBody>? {
 
         var annotation: TypeBean? = null
-        annotations.forEach {
+        methodAnnotations.forEach {
             when (it) {
                 is TypeBean -> {
                     annotation = it
