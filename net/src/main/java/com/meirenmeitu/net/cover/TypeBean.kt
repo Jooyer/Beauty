@@ -7,6 +7,9 @@ package com.meirenmeitu.net.cover
  * Time: 10:28
  */
 @Target(AnnotationTarget.FUNCTION)
-annotation class TypeBean {
-
-}
+annotation class TypeBean (
+    /**
+     * 默认 1 --> 表示只排除提交数据时使用, 2 --> 表示返回数据过滤, 3 --> 表示提交和返回都过滤
+     */
+    val allExpose : Int = 1
+)

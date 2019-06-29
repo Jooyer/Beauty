@@ -3,6 +3,9 @@ package com.meirenmeitu.net.retrofit
 import android.content.Context
 import android.text.TextUtils
 import com.meirenmeitu.net.cover.DataConverterFactory
+import com.meirenmeitu.net.cover.Expose2ConverterFactory
+import com.meirenmeitu.net.cover.Expose3ConverterFactory
+import com.meirenmeitu.net.cover.ExposeConverterFactory
 import com.meirenmeitu.net.intercepter.LoggingInterceptor
 import com.meirenmeitu.net.intercepter.TokenInterceptor
 import com.meirenmeitu.net.utils.RetryWithDelay
@@ -174,6 +177,9 @@ class RxRetrofit private constructor() {
             // 转换器按添加顺序匹配
 //            .addCallAdapterFactory(LiveDataCallAdapterFactory())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(ExposeConverterFactory.create())
+            .addConverterFactory(Expose2ConverterFactory.create())
+            .addConverterFactory(Expose3ConverterFactory.create())
             .addConverterFactory(DataConverterFactory.create())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())

@@ -67,26 +67,30 @@ class ADActivity : BaseActivity<ADPresenter>() {
 
     override fun setLogic() {
         AndPermission.with(this)
-                .runtime()
-                .permission(Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE)
-                .onGranted {
-                    showAD()  // TODO 临时注释
-                    // 将分享的 image 保存到 SD卡
-                    FileUtil.drawableToFile(ContextCompat.getDrawable(this@ADActivity, R.mipmap.ic_share_logo)!!
-                            as BitmapDrawable, FileUtil.SHARE_MOLUE)
+            .runtime()
+            .permission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
+            .onGranted {
+                //                    showAD()  // TODO 临时注释
+                // 将分享的 image 保存到 SD卡
+                FileUtil.drawableToFile(
+                    ContextCompat.getDrawable(this@ADActivity, R.mipmap.ic_share_logo)!!
+                            as BitmapDrawable, FileUtil.SHARE_MOLUE
+                )
 
 //                    Looper.myQueue().addIdleHandler {
 //                        false // false 只回调一次
 //                    }
-                }.onDenied {
-                    //TODO 给一个弹窗,然后用户点击设置去设置界面, 回来检查权限是否给了
-                    val localIntent = Intent()
-                    localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    localIntent.action = "android.settings.APPLICATION_DETAILS_SETTINGS"
-                    localIntent.data = Uri.fromParts("package", packageName, null)
-                    startActivity(localIntent)
-                }.start()
+            }.onDenied {
+                //TODO 给一个弹窗,然后用户点击设置去设置界面, 回来检查权限是否给了
+                val localIntent = Intent()
+                localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                localIntent.action = "android.settings.APPLICATION_DETAILS_SETTINGS"
+                localIntent.data = Uri.fromParts("package", packageName, null)
+                startActivity(localIntent)
+            }.start()
 
 
 //        mInterAd = InterstitialAd(this@ADActivity, adPlaceId)
@@ -119,20 +123,38 @@ class ADActivity : BaseActivity<ADPresenter>() {
     }
 
     override fun bindEvent() {
-
+        cdv_count_down_ad.setOnClickListener {
+            //            mPresenter.logins("18328369558","1234")
+//            val helpInfo = HelpInfo()
+//            helpInfo.cnName = "哈哈"
+//            helpInfo.engName = "cl"
+//            helpInfo.casCode = "123"
+//            helpInfo.weight = 123
+//            helpInfo.address = "武汉"
+//            helpInfo.organization = "武汉大学"
+//            helpInfo.gotFunc = 1
+//            helpInfo.coinCount = 100
+//            helpInfo.remark = "备注.."
+//
+//            helpInfo.userId = "eb7b58d2ebe240a78e7bd51e3cc58bcb"
+//            helpInfo.userName = "张三"
+//            helpInfo.userAvatar = 1
+//
+//            mPresenter.publishHelp(helpInfo)
+        }
     }
 
 
     private fun showAD() {
         println("showAD=============" + NetUtil.isNetWorkAvailable())
-        if (NetUtil.isNetWorkAvailable()){ // 网络正常
+        if (NetUtil.isNetWorkAvailable()) { // 网络正常
             println("showAD=============2")
             AdSettings.setSupportHttps(true)
             val adPlaceId = "2058622"
             SplashAd(this@ADActivity, ll_ad_container_ad, AdListener(), adPlaceId, true)
             // TODO 定位功能暂时不用
 //        LocationUtil.locate(this)
-        }else{
+        } else {
             println("showAD=============3")
             gotoNexts()
         }
@@ -176,8 +198,10 @@ class ADActivity : BaseActivity<ADPresenter>() {
     @SuppressLint("PackageManagerGetSignatures")
     private fun getAppMD5Signature(): String {
         try {
-            val info = packageManager.getPackageInfo(packageName,
-                    PackageManager.GET_SIGNATURES)
+            val info = packageManager.getPackageInfo(
+                packageName,
+                PackageManager.GET_SIGNATURES
+            )
             val signs = info.signatures
             return MD5Utils.encryptionMD5(signs[0].toByteArray())
 
@@ -193,8 +217,10 @@ class ADActivity : BaseActivity<ADPresenter>() {
     @SuppressLint("PackageManagerGetSignatures")
     private fun getAppSHA1Signature(): String {
         try {
-            val info = packageManager.getPackageInfo(packageName,
-                    PackageManager.GET_SIGNATURES)
+            val info = packageManager.getPackageInfo(
+                packageName,
+                PackageManager.GET_SIGNATURES
+            )
             val signs = info.signatures
             return MD5Utils.encryptionSHA1(signs[0].toByteArray())
 
@@ -209,7 +235,7 @@ class ADActivity : BaseActivity<ADPresenter>() {
             startActivity(Intent(this@ADActivity, MainActivity::class.java))
             overridePendingTransition(R.anim.act_center_in, R.anim.act_center_out)
             delayFinish(650)
-        },2000)
+        }, 2000)
     }
 
 }
