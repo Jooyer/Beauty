@@ -10,7 +10,9 @@ import retrofit2.Retrofit
 import java.lang.reflect.Type
 
 
-/** https://blog.csdn.net/qq_22804827/article/details/61915760
+/**
+ * https://www.cnblogs.com/baiqiantao/p/7512336.html  --> 高级用法
+ * https://blog.csdn.net/qq_22804827/article/details/61915760
  * https://gitee.com/yang_share/codes/hckdsjf0ur5e96xy23lzi14
  * Desc: 自定义工厂方法解析注解的数据
  * Author: Jooyer
@@ -23,8 +25,6 @@ class DataConverterFactory(private val gson: Gson) : Converter.Factory() {
     companion object {
         val gson = GsonBuilder()
             .registerTypeAdapterFactory(NullStringToEmptyAdapterFactory())
-                // https://blog.csdn.net/winter13292/article/details/51355046 (Gson 过滤字段的几种方法)
-            .excludeFieldsWithoutExposeAnnotation()
             .create()
 
         fun create(): DataConverterFactory {
@@ -39,7 +39,7 @@ class DataConverterFactory(private val gson: Gson) : Converter.Factory() {
         retrofit: Retrofit
     ): Converter<ResponseBody, *>? {
         val adapter = gson.getAdapter(TypeToken.get(type))
-        println("responseBodyConverter===========${TypeToken.get(type).rawType}")
+//        println("responseBodyConverter=====Data======${TypeToken.get(type).rawType}")
         var annotation: TypeData? = null
         annotations.forEach {
             when (it) {
@@ -48,7 +48,6 @@ class DataConverterFactory(private val gson: Gson) : Converter.Factory() {
                 }
             }
         }
-
         return when (annotation) {
             null -> super.responseBodyConverter(type, annotations, retrofit)
             else -> DataResponseBodyConverter(adapter, gson, annotation!!)
@@ -64,11 +63,11 @@ class DataConverterFactory(private val gson: Gson) : Converter.Factory() {
         type: Type, annotations: Array<out Annotation>,
         methodAnnotations: Array<out Annotation>, retrofit: Retrofit
     ): Converter<*, RequestBody>? {
-
-        var annotation: TypeBean? = null
+//        println("requestBodyConverter=====Data======${TypeToken.get(type).rawType}")
+        var annotation: TypeData? = null
         methodAnnotations.forEach {
             when (it) {
-                is TypeBean -> {
+                is TypeData -> {
                     annotation = it
                 }
             }
