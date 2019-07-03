@@ -1,10 +1,12 @@
 package com.meirenmeitu.net.download;
 
+import androidx.annotation.Keep;
+
 /**
  * Created by Jooyer on 2018/6/14
  *
  */
-
+@Keep
 public class ThreadInfo {
     // 线程 ID
     private int id;

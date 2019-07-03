@@ -1,9 +1,11 @@
 package com.meirenmeitu.net.rxbus;
 
+import androidx.annotation.Keep;
+
 /** 传递消息的类
  * Created by Jooyer on 2017/6/3
  */
-
+@Keep
 public class RxMessage {
 
     private int code;

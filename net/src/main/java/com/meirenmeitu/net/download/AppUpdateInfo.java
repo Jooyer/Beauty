@@ -1,11 +1,14 @@
 package com.meirenmeitu.net.download;
 
+import androidx.annotation.Keep;
+
 /**
  * Desc:
  * Author: Jooyer
  * Date: 2018-11-25
  * Time: 12:29
  */
+@Keep
 public class AppUpdateInfo {
 
     // 下载地址
