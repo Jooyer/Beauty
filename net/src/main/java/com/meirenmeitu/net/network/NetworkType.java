@@ -1,11 +1,14 @@
 package com.meirenmeitu.net.network;
 
+import androidx.annotation.Keep;
+
 /**
  * Desc: https://www.jianshu.com/p/6fa0f1f1ce48?utm_campaign=haruki&utm_content=note&utm_medium=reader_share&utm_source=qq
  * Author: Jooyer
  * Date: 2018-09-21
  * Time: 15:22
  */
+@Keep
 public enum NetworkType {
 
     NETWORK_WIFI("WiFi"),

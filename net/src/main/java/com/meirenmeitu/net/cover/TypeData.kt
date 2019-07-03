@@ -1,5 +1,7 @@
 package com.meirenmeitu.net.cover
 
+import androidx.annotation.Keep
+
 /** 注解: https://www.jianshu.com/p/d3721b171e9f / https://blog.csdn.net/feint123/article/details/77861740
  * Cover: https://blog.csdn.net/jdsjlzx/article/details/51860663
  * APT : https://blog.csdn.net/a296777513/article/details/79205798
@@ -8,6 +10,7 @@ package com.meirenmeitu.net.cover
  * Date: 2018-07-24
  * Time: 18:31
  */
+@Keep
 @Target(AnnotationTarget.FUNCTION)
 //@Retention(AnnotationRetention.RUNTIME) // 可以省略
 annotation class TypeData(
