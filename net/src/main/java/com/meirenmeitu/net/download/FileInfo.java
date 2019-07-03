@@ -1,12 +1,14 @@
 package com.meirenmeitu.net.download;
 
+import androidx.annotation.Keep;
+
 import java.io.Serializable;
 
 /**
  * Created by Jooyer on 2018/6/14
  * ${DESCRIPTION}
  */
-
+@Keep
 public class FileInfo implements Serializable {
     // 文件ID
     private int id;
