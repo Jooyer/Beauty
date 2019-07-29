@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 
 /**
@@ -34,6 +35,9 @@ public abstract class BaseHeaderView extends FrameLayout {
     public BaseHeaderView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
+
+    /* 设置背景色 */
+    public abstract void setBackground(@ColorInt int color);
 
     /*不停回调BounceLayout的拉动距离*/
     public abstract void handleDrag(float dragY);

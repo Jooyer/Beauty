@@ -2,6 +2,7 @@ package com.meirenmeitu.ui.mvp
 
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -58,6 +59,15 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     override fun onAttachedToWindow() {
         setLogic()
         bindEvent()
+        Looper.myQueue().addIdleHandler {
+            onLoad()
+            false
+        }
+    }
+
+    // 可以放这里加载数据,此时界面UI绘制完成
+    open fun onLoad() {
+        
     }
 
     /**

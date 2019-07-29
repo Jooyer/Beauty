@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -36,6 +37,8 @@ public abstract class BaseFooterView extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
+    /* 设置背景色 */
+    public abstract void setBackground(@ColorInt int color);
     /*不停回调BounceLayout的拉动距离*/
     public abstract void handlePull(float dragY);
     /*加载头判断是否可以进行加载更多*/

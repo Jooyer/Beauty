@@ -31,6 +31,8 @@ class StatusManager(builder: Builder) {
     var mRootFrameLayout: RootStatusLayout? = null
     var mHasLoading = false
 
+    // 开始加载时间
+    var mStartTime: Long = 0
 
     fun setTransY(transY: Float) {
         mRootFrameLayout?.setTransY(transY)
@@ -41,6 +43,7 @@ class StatusManager(builder: Builder) {
      */
     fun showLoading() {
         mRootFrameLayout?.let { root ->
+            mStartTime = System.currentTimeMillis()
             root.showLoading()
             mHasLoading = true
         }
@@ -51,16 +54,20 @@ class StatusManager(builder: Builder) {
      * 显示内容
      */
     fun showContent() {
-        mRootFrameLayout?.showContent()
-        mHasLoading = false
+        val endTime = System.currentTimeMillis()
+        if (endTime - mStartTime >= 2000) {
+            delayShowContent(0)
+        } else {
+            delayShowContent(2000 + mStartTime - endTime)
+        }
     }
 
-    fun delayShowContent() {
+    fun delayShowContent(delay: Long) {
         mRootFrameLayout?.let { root ->
             root.postDelayed({
                 root.showContent()
                 mHasLoading = false
-            }, 600)
+            }, delay)
         }
     }
 
