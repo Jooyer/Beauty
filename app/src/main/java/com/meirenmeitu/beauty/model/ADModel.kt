@@ -3,7 +3,7 @@ package com.meirenmeitu.beauty.model
 import com.meirenmeitu.beauty.net.AppService
 import com.meirenmeitu.common.bean.HelpInfo
 import com.meirenmeitu.common.bean.UserInfo
-import com.meirenmeitu.net.cover.RxObserver
+import com.meirenmeitu.common.other.RxObserver
 import com.meirenmeitu.net.response.Response
 import com.meirenmeitu.net.retrofit.RxRetrofit
 import com.meirenmeitu.net.utils.CallBack

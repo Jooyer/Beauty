@@ -119,6 +119,8 @@ class MainActivity : BaseActivity<MainPresenter>() {
 
     override fun useStartAnim() = false
 
+    override fun useStatusManager() = false
+
     override fun createPresenter(): MainPresenter {
         hideStatusBarAndNavigationBar()
         // 注册全面屏手势监听
@@ -146,7 +148,6 @@ class MainActivity : BaseActivity<MainPresenter>() {
                 startActivity(localIntent)
             }.start()
 //        setDrawerLeftEdgeSize(this,dl_contain_main,0.1F)
-
     }
 
 
