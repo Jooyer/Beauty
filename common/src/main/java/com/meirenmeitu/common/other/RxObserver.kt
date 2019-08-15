@@ -1,5 +1,6 @@
-package com.meirenmeitu.net.cover
+package com.meirenmeitu.common.other
 
+import com.meirenmeitu.net.cover.ApiException
 import io.reactivex.MaybeObserver
 import io.reactivex.disposables.Disposable
 import org.json.JSONException

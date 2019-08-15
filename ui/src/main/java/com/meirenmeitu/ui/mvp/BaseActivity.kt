@@ -47,7 +47,7 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
         NetWorkReceiver.INSTANCE.registerReceiver(this)
 
         if (useStartAnim()) {
-            overridePendingTransition(R.anim.act_bottom_in, R.anim.act_bottom_out)
+            overridePendingTransition(R.anim.base_slide_right_in, R.anim.base_slide_remain)
         }
 
         if (0 != getLayoutId()) {
@@ -92,9 +92,9 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
         mStatusManager = StatusManager.newBuilder(this)
             .contentView(contentView)
             .loadingView(getLoadingViewLayoutId())
-            .emptyDataView(getLoadingViewLayoutId())
-            .netWorkErrorView(getLoadingViewLayoutId())
-            .errorView(getLoadingViewLayoutId())
+            .emptyDataView(getEmptyDataViewLayoutId())
+            .netWorkErrorView(getNetWorkErrorViewLayoutId())
+            .errorView(getErrorViewLayoutId())
             .retryViewId(R.id.tv_retry_load_data)
             .onRetryListener(this)
             .build()
@@ -120,7 +120,7 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
     override fun finish() {
         super.finish()
         if (useStartAnim()) {
-            overridePendingTransition(R.anim.act_bottom_in, R.anim.act_bottom_out)
+            overridePendingTransition(R.anim.base_slide_remain,R.anim.base_slide_right_out)
         }
     }
 

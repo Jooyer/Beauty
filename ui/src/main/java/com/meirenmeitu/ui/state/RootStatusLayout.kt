@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.util.forEach
 
 
 /**
@@ -18,40 +19,42 @@ import androidx.constraintlayout.widget.ConstraintLayout
  * Date: 2018-07-30
  * Time: 11:23
  */
-class RootStatusLayout(context: Context?, attrs: AttributeSet?, defStyleAttr: Int)
-    : FrameLayout(context, attrs, defStyleAttr) {
+class RootStatusLayout(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
+    FrameLayout(context, attrs, defStyleAttr) {
 
-    constructor(context: Context?, attrs: AttributeSet?) : this(context, attrs, 0)
+    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
-    constructor(context: Context?) : this(context, null, 0)
+    constructor(context: Context) : this(context, null, 0)
 
     /**
      * loading 加载id
      */
-    val LAYOUT_LOADING_ID = 1
+    private val LAYOUT_LOADING_ID = 1
 
     /**
      * 内容id
      */
-    val LAYOUT_CONTENT_ID = 2
+    private val LAYOUT_CONTENT_ID = 2
 
     /**
      * 异常id
      */
-    val LAYOUT_ERROR_ID = 3
+    private val LAYOUT_ERROR_ID = 3
 
     /**
      * 网络异常id
      */
-    val LAYOUT_NETWORK_ERROR_ID = 4
+    private val LAYOUT_NETWORK_ERROR_ID = 4
 
     /**
      * 空数据id
      */
-    val LAYOUT_EMPTY_ID = 5
+    private val LAYOUT_EMPTY_ID = 5
 
-    var mTransY: Float = 0F
-
+    /**
+     * 当需要将此根布局下移时,可以设置此值
+     */
+    private var mTransY: Float = 0F
 
     /**
      * 存放布局集合
@@ -61,17 +64,13 @@ class RootStatusLayout(context: Context?, attrs: AttributeSet?, defStyleAttr: In
     /**
      * 视图管理器
      */
-    private var mStatusLayoutManager: StatusManager? = null
-
-    /**
-     * 不同视图的切换
-     */
-//    private var onShowHideViewListener: OnShowOrHideViewListener? = null
+    private lateinit var mStatusLayoutManager: StatusManager
 
     /**
      * 点击重试按钮回调
      */
     private var onRetryListener: OnRetryListener? = null
+
 
     fun setTransY(transY: Float) {
         mTransY = transY
@@ -84,29 +83,30 @@ class RootStatusLayout(context: Context?, attrs: AttributeSet?, defStyleAttr: In
 
     private fun addAllLayoutViewsToRoot() {
         val params = ConstraintLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT)
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
 
-        if (0 != mStatusLayoutManager?.mContentLayoutResId) {
-            addLayoutResId(mStatusLayoutManager?.mContentLayoutResId!!, LAYOUT_CONTENT_ID, params)
-        } else if (null != mStatusLayoutManager?.mContentLayoutView) {
-            addLayoutView(mStatusLayoutManager?.mContentLayoutView!!, LAYOUT_CONTENT_ID, params)
+        if (0 != mStatusLayoutManager.mContentLayoutResId) {
+            addLayoutResId(mStatusLayoutManager.mContentLayoutResId, LAYOUT_CONTENT_ID, params)
+        } else {
+            addLayoutView(mStatusLayoutManager.mContentLayoutView, LAYOUT_CONTENT_ID, params)
         }
 
-        if (0 != mStatusLayoutManager?.mLoadingLayoutResId) {
-            addLayoutResId(mStatusLayoutManager?.mLoadingLayoutResId!!, LAYOUT_LOADING_ID, params)
+        if (0 != mStatusLayoutManager.mLoadingLayoutResId) {
+            addLayoutResId(mStatusLayoutManager.mLoadingLayoutResId, LAYOUT_LOADING_ID, params)
         }
 
-        if (null != mStatusLayoutManager?.mEmptyDataVs) {
-            addView(mStatusLayoutManager?.mEmptyDataVs, params)
+        if (null != mStatusLayoutManager.mEmptyDataVs) {
+            addView(mStatusLayoutManager.mEmptyDataVs, params)
         }
 
-        if (null != mStatusLayoutManager?.mErrorVs) {
-            addView(mStatusLayoutManager?.mErrorVs, params)
+        if (null != mStatusLayoutManager.mErrorVs) {
+            addView(mStatusLayoutManager.mErrorVs, params)
         }
 
-        if (null != mStatusLayoutManager?.mNetworkErrorVs) {
-            addView(mStatusLayoutManager?.mNetworkErrorVs, params)
+        if (null != mStatusLayoutManager.mNetworkErrorVs) {
+            addView(mStatusLayoutManager.mNetworkErrorVs, params)
         }
 
     }
@@ -118,7 +118,7 @@ class RootStatusLayout(context: Context?, attrs: AttributeSet?, defStyleAttr: In
 
     private fun addLayoutResId(@LayoutRes layoutResId: Int, layoutId: Int, param: ConstraintLayout.LayoutParams) {
         val view: View = LayoutInflater.from(context)
-                .inflate(layoutResId, null)
+            .inflate(layoutResId, null)
         mLayoutViews.put(layoutId, view)
         if (LAYOUT_LOADING_ID == layoutId) {
             view.visibility = View.GONE
@@ -166,53 +166,91 @@ class RootStatusLayout(context: Context?, attrs: AttributeSet?, defStyleAttr: In
             showHideViewById(LAYOUT_ERROR_ID)
     }
 
+    fun setOnRetryListener(listener: OnRetryListener?) {
+        onRetryListener = listener
+    }
 
+    /**
+     * 显示当前的,隐藏其他
+     * @param layoutId --> 当前需要显示的 View ID
+     */
     private fun showHideViewById(layoutId: Int) {
-        for (i in 0 until mLayoutViews.size()) {
-            val key = mLayoutViews.keyAt(i)
-            val value = mLayoutViews[key]
-
-            if (LAYOUT_CONTENT_ID == key) {  // 内容布局一直显示
-                value.visibility = View.VISIBLE
-                value.translationY = 0F
-            }else if (layoutId == key) {   // 显示该 View
-                value.visibility = View.VISIBLE
-                val param = value.layoutParams as FrameLayout.LayoutParams
-                param.topMargin = dp2px(mTransY).toInt()
-                value.layoutParams = param
-            } else {
-                if (View.GONE != value.visibility) { // 需要隐藏的View
-                    value.animate()
+        mLayoutViews.forEach { key, value ->
+            when (key) {
+                LAYOUT_LOADING_ID -> { // 加载布局
+                    if (layoutId == key) {   // 显示该 View
+                        value.visibility = View.VISIBLE
+                        val param = value.layoutParams as LayoutParams
+                        param.topMargin = dp2px(mTransY).toInt()
+                        value.layoutParams = param
+                    } else {
+                        value.animate()
                             .alpha(0F)
                             .setDuration(300)
-                            .withEndAction { value.visibility = View.GONE
-                                value.alpha = 1F}
+                            .withEndAction {
+                                value.visibility = View.GONE
+                                value.alpha = 1F
+                            }
+                    }
+                }
+                LAYOUT_CONTENT_ID -> { // 内容布局一直显示
+                    value.visibility = View.VISIBLE
+                    value.translationY = 0F
+                }
+                LAYOUT_ERROR_ID -> { // 异常布局
+                    if (layoutId == key) {   // 显示该 View
+                        value.visibility = View.VISIBLE
+                        val param = value.layoutParams as LayoutParams
+                        param.topMargin = dp2px(mTransY).toInt()
+                        value.layoutParams = param
+                    } else {
+                        value.visibility = View.GONE
+                    }
+                }
+                LAYOUT_NETWORK_ERROR_ID -> { // 网络错误
+                    if (layoutId == key) {   // 显示该 View
+                        value.visibility = View.VISIBLE
+                        val param = value.layoutParams as LayoutParams
+                        param.topMargin = dp2px(mTransY).toInt()
+                        value.layoutParams = param
+                    } else {
+                        value.visibility = View.GONE
+                    }
+                }
+                LAYOUT_EMPTY_ID -> { // 空视图
+                    if (layoutId == key) {   // 显示该 View
+                        value.visibility = View.VISIBLE
+                        val param = value.layoutParams as LayoutParams
+                        param.topMargin = dp2px(mTransY).toInt()
+                        value.layoutParams = param
+                    } else {
+                        value.visibility = View.GONE
+                    }
                 }
             }
         }
-    }
-
-    fun setOnRetryListener(listener: OnRetryListener?) {
-        onRetryListener = listener
     }
 
     /**
      * 加载 StubView
      */
     private fun inflateLayout(layoutId: Int): Boolean {
-        var isShow = true
+        var isShow = false
         when (layoutId) {
             LAYOUT_NETWORK_ERROR_ID -> {
                 isShow = when {
-                    null != mStatusLayoutManager?.mNetworkErrorView -> {
-                        retryLoad(mStatusLayoutManager?.mNetworkErrorView!!, mStatusLayoutManager?.mNetWorkErrorRetryViewId!!)
-                        mLayoutViews.put(layoutId, mStatusLayoutManager?.mNetworkErrorView!!)
+                    null != mStatusLayoutManager.mNetworkErrorView -> {
+                        retryLoad(
+                            mStatusLayoutManager.mNetworkErrorView!!,
+                            mStatusLayoutManager.mNetWorkErrorRetryViewId
+                        )
+                        mLayoutViews.put(layoutId, mStatusLayoutManager.mNetworkErrorView!!)
                         return true
                     }
-                    null != mStatusLayoutManager?.mNetworkErrorVs -> {
-                        val view: View = mStatusLayoutManager?.mNetworkErrorVs!!.inflate()
-                        mStatusLayoutManager?.mNetworkErrorView = view
-                        retryLoad(view, mStatusLayoutManager?.mNetWorkErrorRetryViewId!!)
+                    null != mStatusLayoutManager.mNetworkErrorVs -> {
+                        val view: View = mStatusLayoutManager.mNetworkErrorVs!!.inflate()
+                        mStatusLayoutManager.mNetworkErrorView = view
+                        retryLoad(view, mStatusLayoutManager.mNetWorkErrorRetryViewId)
                         mLayoutViews.put(layoutId, view)
                         true
                     }
@@ -221,15 +259,15 @@ class RootStatusLayout(context: Context?, attrs: AttributeSet?, defStyleAttr: In
             }
             LAYOUT_ERROR_ID -> {
                 isShow = when {
-                    null != mStatusLayoutManager?.mErrorView -> {
-                        retryLoad(mStatusLayoutManager?.mErrorView!!, mStatusLayoutManager?.mErrorRetryViewId!!)
-                        mLayoutViews.put(layoutId, mStatusLayoutManager?.mErrorView!!)
+                    null != mStatusLayoutManager.mErrorView -> {
+                        retryLoad(mStatusLayoutManager.mErrorView!!, mStatusLayoutManager.mErrorRetryViewId)
+                        mLayoutViews.put(layoutId, mStatusLayoutManager.mErrorView!!)
                         return true
                     }
-                    null != mStatusLayoutManager?.mErrorVs -> {
-                        val view: View = mStatusLayoutManager?.mErrorVs!!.inflate()
-                        mStatusLayoutManager?.mErrorView = view
-                        retryLoad(view, mStatusLayoutManager?.mErrorRetryViewId!!)
+                    null != mStatusLayoutManager.mErrorVs -> {
+                        val view: View = mStatusLayoutManager.mErrorVs!!.inflate()
+                        mStatusLayoutManager.mErrorView = view
+                        retryLoad(view, mStatusLayoutManager.mErrorRetryViewId)
                         mLayoutViews.put(layoutId, view)
                         true
                     }
@@ -238,15 +276,15 @@ class RootStatusLayout(context: Context?, attrs: AttributeSet?, defStyleAttr: In
             }
             LAYOUT_EMPTY_ID -> {
                 isShow = when {
-                    null != mStatusLayoutManager?.mEmptyDataView -> {
-                        retryLoad(mStatusLayoutManager?.mEmptyDataView!!, mStatusLayoutManager?.mEmptyDataRetryViewId!!)
-                        mLayoutViews.put(layoutId, mStatusLayoutManager?.mEmptyDataView!!)
+                    null != mStatusLayoutManager.mEmptyDataView -> {
+                        retryLoad(mStatusLayoutManager.mEmptyDataView!!, mStatusLayoutManager.mEmptyDataRetryViewId)
+                        mLayoutViews.put(layoutId, mStatusLayoutManager.mEmptyDataView!!)
                         return true
                     }
-                    null != mStatusLayoutManager?.mEmptyDataVs -> {
-                        val view: View = mStatusLayoutManager?.mEmptyDataVs!!.inflate()
-                        mStatusLayoutManager?.mEmptyDataView = view
-                        retryLoad(view, mStatusLayoutManager?.mEmptyDataRetryViewId!!)
+                    null != mStatusLayoutManager.mEmptyDataVs -> {
+                        val view: View = mStatusLayoutManager.mEmptyDataVs!!.inflate()
+                        mStatusLayoutManager.mEmptyDataView = view
+                        retryLoad(view, mStatusLayoutManager.mEmptyDataRetryViewId)
                         mLayoutViews.put(layoutId, view)
                         true
                     }
@@ -262,11 +300,12 @@ class RootStatusLayout(context: Context?, attrs: AttributeSet?, defStyleAttr: In
      */
     private fun retryLoad(view: View, layoutResId: Int) {
         val retryView: View? = view.findViewById(
-                if (0 != mStatusLayoutManager?.mRetryViewId!!) {
-                    mStatusLayoutManager?.mRetryViewId!!
-                } else {
-                    layoutResId
-                }) ?: return
+            if (0 != mStatusLayoutManager.mRetryViewId) {
+                mStatusLayoutManager.mRetryViewId
+            } else {
+                layoutResId
+            }
+        ) ?: return
         retryView?.setOnClickListener {
             onRetryListener?.onRetry()
         }

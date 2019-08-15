@@ -150,15 +150,19 @@ public class BounceLayout extends FrameLayout {
                 }
                 if ((forwardingHelper.notForwarding(mXDown, mYDown, ev.getX(), ev.getY()) && !alwaysDispatch)
                         || forceDrag) {//notForwarding做的是第一步骤的拦截判断
+                    System.out.println("dispatchTouchEvent=================0" );
                     if (dispatchToChild(ev.getY(currentPointer))) {//转发给孩子
                         currentY = mYMove;
+                        System.out.println("dispatchTouchEvent=================1" );
                         return super.dispatchTouchEvent(ev);
                     } else {
+                        System.out.println("dispatchTouchEvent=================2: " + (mYMove - currentY));
                         moving(ev);
                         currentY = mYMove;
                         return true;
                     }
                 } else {//父亲转发事件到孩子
+                    System.out.println("dispatchTouchEvent=================3" );
                     alwaysDispatch = dispathAble;
                     currentY = mYMove;
                     return super.dispatchTouchEvent(ev);
@@ -249,12 +253,15 @@ public class BounceLayout extends FrameLayout {
      * @param ev
      */
     private void moving(MotionEvent ev) {
+        System.out.println("dispatchTouchEvent=================4" );
         forceDrag = true;
         float scrollY = mYMove - currentY;
+        System.out.println("dispatchTouchEvent=================scrollY:" + scrollY);
         float p = Math.abs(totalOffsetY / height);
         if (p == 1) {
             p = 1 - Integer.MIN_VALUE;//保证永远不能拉到布局不可见的状态
         }
+        System.out.println("dispatchTouchEvent=================rate:" + dampingCoefficient * (1.0f / (1 - p)));
         scrollY = scrollY / (dampingCoefficient * (1.0f / (1 - p)));
         float offsetY = totalOffsetY + scrollY;
         if (offsetY * totalOffsetY < 0) {//存在临界点变相
@@ -262,6 +269,9 @@ public class BounceLayout extends FrameLayout {
         } else {
             totalOffsetY = offsetY;
         }
+
+        System.out.println("dispatchTouchEvent=================offsetY:" + offsetY);
+
         if (!disallowBounce) {//不允许拉动
             scrollTo(0, (int) -totalOffsetY);
         }
