@@ -1,5 +1,6 @@
 package com.meirenmeitu.beauty.view
 
+import android.content.Intent
 import android.graphics.Color
 import android.util.SparseArray
 import android.view.View
@@ -53,19 +54,25 @@ class CollectActivity : BaseActivity<CollectPresenter>() {
     }
 
     override fun bindEvent() {
-        RxView.setOnClickListeners(this, ct_toolbar.iv_left_icon_menu)
+        RxView.setOnClickListeners(this, ct_toolbar.iv_left_icon_menu, ct_toolbar)
+
+
     }
 
     override fun onClick(view: View) {
         when (view) {
             ct_toolbar.iv_left_icon_menu -> finish()
+
+            ct_toolbar -> {
+                startActivity(Intent(this@CollectActivity,LoginActivity::class.java))
+            }
         }
     }
 
     private fun setAdapter() {
 
         imageUrls.forEach { url ->
-//            mImages.add(Image(url, "测试"))
+            //            mImages.add(Image(url, "测试"))
             listfragemnt.add(PreviewFragment::class.java)
         }
 
@@ -108,7 +115,7 @@ class CollectActivity : BaseActivity<CollectPresenter>() {
 
                 val lp = imageView.layoutParams
                 lp.width = DensityUtils.getWindowSize(this@CollectActivity).widthPixels / 2 - DensityUtils.dpToPx(2)
-                lp.height = (lp.width / MMKV.defaultMMKV().decodeFloat(Constants.KEY_NETWORK_STATE,1.0F)).toInt()
+                lp.height = (lp.width / MMKV.defaultMMKV().decodeFloat(Constants.KEY_NETWORK_STATE, 1.0F)).toInt()
                 imageView.layoutParams = lp
 
                 val param = holder.itemView.layoutParams as RecyclerView.LayoutParams

@@ -17,7 +17,7 @@ object Constants {
      * 服务器地址
      */
 //    const val BASE_URL = "http://192.168.100.92:80/images/"
-    const val BASE_URL = "http://39.105.178.65:80/images/"
+    const val BASE_URL = "http://192.168.0.104:80/"
 
     /**
      * 屏幕宽高比

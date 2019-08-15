@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.util.Log
 import android.util.SparseArray
 import android.view.View
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.util.set
 import androidx.lifecycle.Observer
@@ -33,7 +32,6 @@ import com.meirenmeitu.library.utils.JSnackBar
 import com.meirenmeitu.ui.mvp.BaseFragment
 import com.tencent.mmkv.MMKV
 import kotlinx.android.synthetic.main.fragment_category.*
-import java.text.MessageFormat
 
 
 /**
@@ -112,7 +110,7 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 
     override fun onFirstUserVisible() {
         setAdapter()
-        bl_container_category.autoRefresh()
+//        bl_container_category.autoRefresh()
         mPresenter.mImages.observe(this, Observer {
             totalPage = Math.ceil(it.total.toDouble() / Constants.PAGE_INFO_SIZE_PRE_PAGE_10).toLong()
             if (1L == currentPage) {
@@ -146,15 +144,15 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
             NormalDecoration(mActivity, DensityUtils.dpToPx(4), Color.WHITE)
         )
 
-        val adapter = object : CommonAdapter<ImageBean>(mActivity, R.layout.item_image_category, mImages) {
+        val adapter = object : CommonAdapter<String>(mActivity, R.layout.item_image_category, imageUrls) {
             private val location = Rect()
-            override fun convert(holder: ViewHolder, bean: ImageBean, position: Int) {
+            override fun convert(holder: ViewHolder, bean: String, position: Int) {
                 val imageView = holder.getView<AppCompatImageView>(R.id.iv_content_item_category)
-                holder.getView<TextView>(R.id.tv_content_item_title).text = bean.imageName
-                holder.getView<TextView>(R.id.tv_content_item_like).text = "${bean.likeCount}"
-                holder.getView<TextView>(R.id.tv_content_item_count).text =
-                    MessageFormat.format("{0}P", bean.seriesCount)
-
+//                holder.getView<TextView>(R.id.tv_content_item_title).text = bean.imageName
+//                holder.getView<TextView>(R.id.tv_content_item_like).text = "${bean.likeCount}"
+//                holder.getView<TextView>(R.id.tv_content_item_count).text =
+//                    MessageFormat.format("{0}P", bean.seriesCount)
+//
 
                 location.setEmpty()
                 rv_root_category.getGlobalVisibleRect(location)
@@ -175,11 +173,13 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 
                 holder.itemView.tag = imageView
                 list_viewholder[position] = holder
+//                ImageLoader.loadImgWithCenterCropAndNoPlaceHolder(
+//                    imageView,
+//                    Constants.BASE_URL.plus(bean.imageId).plus("/")
+//                        .plus(bean.imageUrl.split("@@")[0])
+//                )
                 ImageLoader.loadImgWithCenterCropAndNoPlaceHolder(
-                    imageView,
-                    Constants.BASE_URL.plus(bean.imageId).plus("/")
-                        .plus(bean.imageUrl.split("@@")[0])
-                )
+                    imageView,bean)
             }
 
         }
@@ -283,5 +283,12 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
             .default()
             .show()
     }
+
+
+    private val imageUrls = arrayListOf<String>(
+        "https://img-my.csdn.net/uploads/201508/05/1438760758_3497.jpg",
+        "https://img-my.csdn.net/uploads/201508/05/1438760758_6667.jpg",
+        "https://img-my.csdn.net/uploads/201508/05/1438760757_3588.jpg",
+        "https://img-my.csdn.net/uploads/201508/05/1438760756_3304.jpg")
 
 }

@@ -44,8 +44,13 @@ public class DefaultHeader extends BaseHeaderView {
         super(context, attrs, defStyleAttr);
         init(context,attrs,defStyleAttr);
     }
-    protected  void init(Context context, AttributeSet attrs, int defStyleAttr){
+
+    @Override
+    public void setBackground(int color) {
         setBackgroundColor(Color.parseColor("#eeeeee"));
+    }
+
+    protected void init(Context context, AttributeSet attrs, int defStyleAttr){
         mContext = context;
         status = HEADER_DRAG;
         childHeight = mContext.getResources().getDimensionPixelSize(R.dimen.height_48);

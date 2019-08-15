@@ -47,8 +47,12 @@ public class DefaultFooter extends BaseFooterView {
         init(context, attrs, defStyleAttr);
     }
 
-    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
+    @Override
+    public void setBackground(int color) {
         setBackgroundColor(Color.parseColor("#eeeeee"));
+    }
+
+    private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         mContext = context;
         childHeight = mContext.getResources().getDimensionPixelSize(R.dimen.height_48);
         status = FOOTER_PULL;

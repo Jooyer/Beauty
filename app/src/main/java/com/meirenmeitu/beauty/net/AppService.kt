@@ -1,11 +1,14 @@
 package com.meirenmeitu.beauty.net
 
 import com.meirenmeitu.beauty.bean.ImageBean
+import com.meirenmeitu.common.bean.HelpInfo
+import com.meirenmeitu.common.bean.UserInfo
+import com.meirenmeitu.net.cover.TypeBean
 import com.meirenmeitu.net.cover.TypeData
 import com.meirenmeitu.net.response.PageInfo
+import com.meirenmeitu.net.response.Response
 import io.reactivex.Maybe
-import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.*
 
 /**  https://www.jianshu.com/p/164ce59ea28f Retrofit 系列
  * Desc:
@@ -53,5 +56,14 @@ interface AppService {
         @Query("size") size: Long
     ): Maybe<PageInfo<List<ImageBean>>>
 
+    @TypeData(dataKey = "data",errorMsgKey = "msg")
+    @FormUrlEncoded
+    @POST("login/login")
+    fun logins(@Field("phone")phone: String, @Field("code") code: String):Maybe<UserInfo>
 
+    // 不关心返回值,则dataKey=""即可,此时返回数据则需设置为 Maybe<Response>
+    @TypeData(dataKey = "",errorMsgKey = "msg")
+    @TypeBean
+    @POST("help/publish")
+    fun publishHelp(@Body info: HelpInfo): Maybe<Response>
 }

@@ -1,5 +1,6 @@
-package com.meirenmeitu.net.cover
+package com.meirenmeitu.common.other
 
+import com.meirenmeitu.net.cover.ApiException
 import io.reactivex.MaybeObserver
 import io.reactivex.disposables.Disposable
 import org.json.JSONException
@@ -46,6 +47,9 @@ abstract class RxObserver<T> : MaybeObserver<T> {
             }
             is ParseException -> { // 解析异常
                 error(560, e.message ?: "解析异常")
+            }
+            is AssertionError -> { // 返回数据没有data/list
+                error(560, "返回数据没有data/list")
             }
             is UnknownHostException -> { // 无法解析该域名异常
                 error(570, e.message ?: "无法连接")

@@ -1,10 +1,12 @@
 package com.meirenmeitu.net.rxbus;
 
+import androidx.annotation.Keep;
+
 /**
  * 将 RxBus 使用的 code 定义在此处,方便统一管理
  * Created by Jooyer on 2017/6/3
  */
-
+@Keep
 public class RxCodeManager {
     // 预留 0 - 1000 ,作为基本事件
     // 广告显示完毕,跳转到主页
