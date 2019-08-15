@@ -19,12 +19,9 @@ class DataResponseBodyConverter<T>(
     private val TAG = DataResponseBodyConverter::class.java.simpleName
 
     override fun convert(value: ResponseBody): T {
-        try {
+        // @FIXME 可以约定,如果加密则返回字符串,反之返回 json
 
-            // @FIXME 可以约定,如果加密则返回字符串,反之返回 json
-
-
-            // 如果返回数据有加密,需要用这个
+        // 如果返回数据有加密,需要用这个
 //            val bytes = value.bytes()
 //            //对字节数组进行解密操作
 //            val decryptString = RSAUtil.decryptByPublicKeyForSpilt(bytes,)
@@ -37,19 +34,21 @@ class DataResponseBodyConverter<T>(
 //            Log.i(TAG, "解密后的服务器数据字符串处理为json：" + jsonString)
 
 
-            val rspStr = value.string()
-            val jsonObj = gson.fromJson(rspStr, JsonObject::class.java)
-                ?: throw IllegalArgumentException("Json 数据异常")
-            val rspCode = jsonObj.getAsJsonPrimitive(annotation.rspCodeKey).asInt
-            val msg = jsonObj.getAsJsonPrimitive(annotation.errorMsgKey).asString
+        val rspStr = value.string()
+        val jsonObj = gson.fromJson(rspStr, JsonObject::class.java)
+            ?: throw IllegalArgumentException("Json 数据异常")
+        val rspCode = jsonObj.getAsJsonPrimitive(annotation.rspCodeKey).asInt
+        val msg = jsonObj.getAsJsonPrimitive(annotation.errorMsgKey).asString
 
-            val json = JsonObject()
-            json.addProperty(annotation.errorMsgKey, msg)
-            json.addProperty(annotation.rspCodeKey, rspCode)
+        val json = JsonObject()
+        json.addProperty(annotation.errorMsgKey, msg)
+        json.addProperty(annotation.rspCodeKey, rspCode)
 
-            if (annotation.successCode != rspCode) {
-                throw ApiException(rspCode, msg)
-            }
+        if (annotation.successCode != rspCode) {
+            throw ApiException(rspCode, msg)
+        }
+
+        value.use {
             return when {
                 annotation.listKey.isNotEmpty() -> {
                     adapter.fromJsonTree(jsonObj.get(annotation.listKey)) ?: adapter.fromJsonTree(json)
@@ -61,11 +60,6 @@ class DataResponseBodyConverter<T>(
                     adapter.fromJsonTree(json)
                 }
             }
-        } catch (e: Exception) {
-            println("convert================Exception ${e.message}")
-            throw IllegalArgumentException("非法参数异常!")
-        } finally {
-            value.close()
         }
     }
 

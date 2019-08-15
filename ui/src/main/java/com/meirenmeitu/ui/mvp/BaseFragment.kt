@@ -7,10 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import ccom.meirenmeitu.ui.network.NetStateChangeObserver
 import com.meirenmeitu.library.rxbind.RxView
-import com.meirenmeitu.net.network.NetWorkReceiver
-import com.meirenmeitu.net.network.NetworkType
 import com.meirenmeitu.ui.R
 import com.meirenmeitu.ui.state.OnRetryListener
 import com.meirenmeitu.ui.state.StatusManager
@@ -332,9 +329,9 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
         mStatusManager = StatusManager.newBuilder(contentView.context)
             .contentView(contentView)
             .loadingView(getLoadingViewLayoutId())
-            .emptyDataView(getLoadingViewLayoutId())
-            .netWorkErrorView(getLoadingViewLayoutId())
-            .errorView(getLoadingViewLayoutId())
+            .emptyDataView(getEmptyDataViewLayoutId())
+            .netWorkErrorView(getNetWorkErrorViewLayoutId())
+            .errorView(getErrorViewLayoutId())
             .retryViewId(R.id.tv_retry_load_data)
             .onRetryListener(this)
             .build()
