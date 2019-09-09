@@ -1,4 +1,4 @@
-package com.meirenmeitu.library.refresh;
+package com.meirenmeitu.library.bounce;
 
 /**
  * 自定义的事件转发判断，大多数用于水平和竖直方向的冲突解决回调

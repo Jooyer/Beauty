@@ -1,37 +1,24 @@
-package com.meirenmeitu.library.refresh;
+package com.meirenmeitu.library.bounce;
 
 import android.content.Context;
-import android.os.Handler;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Scroller;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.meirenmeitu.library.refresh.footer.BaseFooterView;
-import com.meirenmeitu.library.refresh.header.BaseHeaderView;
+import com.meirenmeitu.library.R;
 
 
 /**
  * https://github.com/tangxianqiang/LightRefresh
  * 继承于帧布局，下拉刷新、上拉加载更多的容器；
- * 功能：
- * 1、使布局上拉下拉具有回弹效果；
- * 2、可以只有上拉刷新；
- * 3、能够auto刷新（界面进入就刷新）；
- * 4、能够快速自定义刷新头，刷新效果；
- * 5、刷新开始、刷新结束回调；
- * 6、加载更多开始、结束回调；
- * 7、必须要有实际宽高才能激活下拉刷新和加载更多；
- * 8、能够结合RecyclerView、ListView、ScrollerView、WebView等相关变化的View，能够同时结合列表+ViewPager+侧拉删除的结构，能够结合侧拉；
- * 9、能够管理多指触控；
- * 10、强烈的阻尼效果
- * 11、子view不能阻止其回弹效果
  *
  * @author tangxianqiang
+ * Jooyer修改为
+ * 功能： 目前移除部分功能,只保留越界回弹
  */
 
 public class BounceLayout extends FrameLayout {
@@ -39,8 +26,6 @@ public class BounceLayout extends FrameLayout {
     private static final String TAG = "BounceLayout";
     /*滚动实例*/
     private Scroller mScroller;
-    /*设备滚动间隙最小值*/
-    private int mTouchSlop;
     /*手指按下的y位置*/
     private float mYDown;
     /*手机上一次移动的y轴位置,也是在拦截事件前最后的y*/
@@ -64,22 +49,16 @@ public class BounceLayout extends FrameLayout {
     /*阻尼系数*/
     private float dampingCoefficient = 3.5f;
     /*控制内容上拉和下拉的处理者，可以自己定义*/
+    // 设置滚动冲突的控制类
     private BounceHandler bounceHandler;
     /*滚动的孩子*/
     private View childContent;
-    /*头布局*/
-    private BaseHeaderView headerView;
-    /*底部布局*/
-    private BaseFooterView footerView;
     /*孩子一旦得到事件后，不还给父亲*/
     private boolean alwaysDispatch;
-    /*是否暂停回弹*/
-//    private boolean bounceStopped;
-    /*刷新锁,防止同时回调多个刷新操作*/
-    private boolean lockBoolean;
     /*是否固定回弹布局*/
     private boolean disallowBounce;
-    private boolean dispathAble = true;
+    //自定义事件分发处理
+    private EventForwardingHelper forwardingHelper;
 
 
     public BounceLayout(@NonNull Context context) {
@@ -98,9 +77,17 @@ public class BounceLayout extends FrameLayout {
     private void init(Context context, AttributeSet attrs, int defStyleAttr) {
         //初始化滚动实例,使用默认的变速插值器
         mScroller = new Scroller(context);
-        ViewConfiguration configuration = ViewConfiguration.get(context);
-        // 获取TouchSlop值
-        mTouchSlop = configuration.getScaledPagingTouchSlop();
+        bounceHandler = new NormalBounceHandler();
+
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.BounceLayout);
+        final boolean bounceUsable = array.getBoolean(R.styleable.BounceLayout_bounce_layout_usable,true);
+        array.recycle();
+        forwardingHelper = new EventForwardingHelper() {
+            @Override
+            public boolean notForwarding(float downX, float downY, float moveX, float moveY) {
+                return bounceUsable && !ForwardingHelper.isXMore(downX, downY, moveX, moveY);
+            }
+        };
     }
 
     /**
@@ -150,10 +137,10 @@ public class BounceLayout extends FrameLayout {
                 }
                 if ((forwardingHelper.notForwarding(mXDown, mYDown, ev.getX(), ev.getY()) && !alwaysDispatch)
                         || forceDrag) {//notForwarding做的是第一步骤的拦截判断
-                    System.out.println("dispatchTouchEvent=================0" );
+                    System.out.println("dispatchTouchEvent=================0");
                     if (dispatchToChild(ev.getY(currentPointer))) {//转发给孩子
                         currentY = mYMove;
-                        System.out.println("dispatchTouchEvent=================1" );
+                        System.out.println("dispatchTouchEvent=================1");
                         return super.dispatchTouchEvent(ev);
                     } else {
                         System.out.println("dispatchTouchEvent=================2: " + (mYMove - currentY));
@@ -162,8 +149,7 @@ public class BounceLayout extends FrameLayout {
                         return true;
                     }
                 } else {//父亲转发事件到孩子
-                    System.out.println("dispatchTouchEvent=================3" );
-                    alwaysDispatch = dispathAble;
+                    System.out.println("dispatchTouchEvent=================3");
                     currentY = mYMove;
                     return super.dispatchTouchEvent(ev);
                 }
@@ -171,35 +157,6 @@ public class BounceLayout extends FrameLayout {
             case MotionEvent.ACTION_CANCEL:
                 forceDrag = false;
                 alwaysDispatch = false;
-                //再抬起手指时都需要判断是否显示footer、header(之前footer、header可能被拉出来需要刷新或者加载更多)
-                if (headerView != null && headerView.checkRefresh()) {
-                    if (disallowBounce) {
-                        if (!lockBoolean) {
-                            if (null != bounceCallBack) {
-                                bounceCallBack.startRefresh();
-                            }
-                            lockBoolean = true;
-                        }
-                    } else {
-                        mScroller.startScroll(0, getScrollY(), 0, -(getScrollY() + headerView.getHeaderHeight()), 500);
-                        invalidate();
-                    }
-                    break;
-                }
-                if (footerView != null && footerView.checkLoading()) {
-                    if (disallowBounce) {
-                        if (!lockBoolean) {
-                            if (null != bounceCallBack) {
-                                bounceCallBack.startLoadingMore();
-                            }
-                            lockBoolean = true;
-                        }
-                    } else {
-                        mScroller.startScroll(0, getScrollY(), 0, -(getScrollY() - footerView.getFooterHeight()), 500);
-                        invalidate();
-                    }
-                    break;
-                }
                 mScroller.startScroll(0, getScrollY(), 0, -getScrollY(), 500);
                 invalidate();
                 break;
@@ -253,7 +210,7 @@ public class BounceLayout extends FrameLayout {
      * @param ev
      */
     private void moving(MotionEvent ev) {
-        System.out.println("dispatchTouchEvent=================4" );
+        System.out.println("dispatchTouchEvent=================4");
         forceDrag = true;
         float scrollY = mYMove - currentY;
         System.out.println("dispatchTouchEvent=================scrollY:" + scrollY);
@@ -276,15 +233,6 @@ public class BounceLayout extends FrameLayout {
             scrollTo(0, (int) -totalOffsetY);
         }
         pointerChange = false;
-        //在布局拉动的时候一定要将拉动的值传到header
-        if (headerView != null) {
-            headerView.handleDrag(totalOffsetY);
-        }
-        //在布局拉动的时候一定要将拉动的值传到footer
-        if (footerView != null) {
-            footerView.handlePull(totalOffsetY);
-        }
-
     }
 
     @Override
@@ -299,6 +247,15 @@ public class BounceLayout extends FrameLayout {
         height = h;
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        if (getChildCount() > 1 || getChildCount() == 0) {
+            throw new IllegalStateException("只能包含一个 childView");
+        }
+        childContent = getChildAt(0);
+    }
+
     /**
      * 加载完成的回弹不能阻止
      */
@@ -307,167 +264,22 @@ public class BounceLayout extends FrameLayout {
         if (forceDrag) {
             return;
         }
-        //需要停止回弹，开始加载。。。
-//        if (bounceStopped) {
-//            Log.i(TAG, "computeScroll: ===============");
-//            bounceStopped = false;
-//            return;
-//        }
+
         if (mScroller.computeScrollOffset()) {
             totalOffsetY = -mScroller.getCurrY();
             scrollTo(0, mScroller.getCurrY());
             invalidate();
-            if (headerView != null) {
-                headerView.handleDrag(totalOffsetY);
-                if (headerView.doRefresh()) {//刷新头开始正式刷新
-                    if (!lockBoolean) {
-                        if (null != bounceCallBack) {
-                            bounceCallBack.startRefresh();
-                        }
-                        forceDrag = true;
-                        lockBoolean = true;
-//                        bounceStopped = true;
-                    }
-                }
-            }
-            if (footerView != null) {
-                footerView.handlePull(totalOffsetY);
-                if (footerView.doLoading()) {//底部加载更多
-                    if (!lockBoolean) {
-                        if (null != bounceCallBack) {
-                            bounceCallBack.startLoadingMore();
-                        }
-                        forceDrag = true;
-                        lockBoolean = true;
-//                        bounceStopped = true;
-                    }
-                }
-            }
-
         }
     }
 
-    public void setBounceHandler(BounceHandler bounceHandler, View v) {
-        this.bounceHandler = bounceHandler;
-        this.childContent = v;
-    }
-
-    public void setEventForwardingHelper(EventForwardingHelper forwardingHelper) {
-        this.forwardingHelper = forwardingHelper;
-    }
-
-    private EventForwardingHelper forwardingHelper;
-
-    public void setHeaderView(BaseHeaderView headerView, ViewGroup parent) {
-        this.headerView = headerView;
-        if (headerView != null) {
-            headerView.setParent(parent);
-            if (disallowBounce) {
-                headerView.setCanTranslation(false);
-            }
-        }
-    }
-
-    public void setFooterView(BaseFooterView footerView, ViewGroup parent) {
-        this.footerView = footerView;
-        if (footerView != null) {
-            footerView.setParent(parent);
-            if (disallowBounce) {
-                footerView.setCanTranslation(false);
-            }
-        }
-    }
-
-    private BounceCallBack bounceCallBack;
-
-    public void setBounceCallBack(BounceCallBack bounceCallBack) {
-        this.bounceCallBack = bounceCallBack;
-    }
-
-    /**
-     * 完成加载
-     */
-    public void setRefreshCompleted() {
-//        bounceStopped = false;
-        headerView.refreshCompleted();
-        lockBoolean = false;
-        forceDrag = false;
-        if (disallowBounce) {
-            totalOffsetY = 0;
-            headerView.handleDrag(0);
-        } else {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mScroller.startScroll(0, getScrollY(), 0, -getScrollY(), 300);
-                    invalidate();
-                }
-            }, 800);
-        }
-        ;
-    }
-
-    /**
-     * 完成加载更多
-     */
-    public void setLoadingMoreCompleted() {
-//        bounceStopped = false;
-        footerView.LoadingCompleted();
-        lockBoolean = false;
-        forceDrag = false;
-        if (disallowBounce) {
-            totalOffsetY = 0;
-            footerView.handlePull(0);
-        } else {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {//一个定时器，消息池管理等待事件
-                    mScroller.startScroll(0, getScrollY(), 0, -getScrollY(), 300);
-                    invalidate();
-                }
-            }, 800);
-        }
-
-    }
-
-    public void setNoMoreData(boolean noMore){
-        if (null != footerView){
-            footerView.setNoMoreData(noMore);
-        }
-    }
 
     public void setDampingCoefficient(float dampingCoefficient) {
         this.dampingCoefficient = dampingCoefficient;
     }
 
-    /**
-     * 自动刷新
-     */
-    public void autoRefresh() {
-        if (headerView == null) {
-            return;
-        }
-        headerView.autoRefresh();
-        if (!disallowBounce) {//固定回弹布局
-            mScroller.startScroll(0, 0, 0, -headerView.getHeaderHeight(), 0);
-            invalidate();
-        } else {
-            if (!lockBoolean) {
-                if (null != bounceCallBack) {
-                    bounceCallBack.startRefresh();
-                }
-                forceDrag = true;
-                lockBoolean = true;
-//                        bounceStopped = true;
-            }
-        }
-    }
 
     public void setDisallowBounce(boolean disallowBounce) {
         this.disallowBounce = disallowBounce;
     }
 
-    public void serDispatchAble(boolean able) {
-        this.dispathAble = able;
-    }
 }

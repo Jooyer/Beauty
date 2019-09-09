@@ -14,4 +14,12 @@
     <string name="lib_load_completed">加载完成</string>
     <string name="lib_load_no_more">没有更多数据</string>
 
+    <string name="loading_tips">内容加载中</string>
+    <string name="normal_tips">下拉刷新</string>
+    <string name="pulling_tips">松开刷新</string>
+    <string name="complete_tips">加载完成</string>
+    <string name="loading">加载中,等待其完成</string>
+    <string name="normal_tips_2">上拉加载更多</string>
+    <string name="pulling_tips_2">松开加载更多</string>
+
 </resources>

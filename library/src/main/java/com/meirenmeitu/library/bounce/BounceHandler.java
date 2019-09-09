@@ -1,4 +1,4 @@
-package com.meirenmeitu.library.refresh;
+package com.meirenmeitu.library.bounce;
 
 import android.view.View;
 
