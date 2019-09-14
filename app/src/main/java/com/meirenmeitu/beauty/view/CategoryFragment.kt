@@ -20,11 +20,6 @@ import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.bean.ImageBean
 import com.meirenmeitu.beauty.presenter.CategoryPresenter
 import com.meirenmeitu.library.dragview.OnDataListener
-import com.meirenmeitu.library.refresh.BounceCallBack
-import com.meirenmeitu.library.refresh.EventForwardingHelper
-import com.meirenmeitu.library.refresh.NormalBounceHandler
-import com.meirenmeitu.library.refresh.footer.DefaultFooter
-import com.meirenmeitu.library.refresh.header.DefaultHeader
 import com.meirenmeitu.library.utils.Constants
 import com.meirenmeitu.library.utils.DensityUtils
 import com.meirenmeitu.library.utils.ImageLoader
@@ -73,39 +68,6 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 //        rv_root_category.postDelayed({
 //            setAdapter()
 //        },400)
-
-        //设置滚动冲突的控制类
-        bl_container_category.setBounceHandler(NormalBounceHandler(), rv_root_category)
-        //设置刷新头，null意味着没有刷新头，不调用该函数意为着空
-        bl_container_category.setHeaderView(DefaultHeader(mActivity), cl_container_category)
-        bl_container_category.setFooterView(DefaultFooter(mActivity), cl_container_category)
-
-        //自定义事件分发处理
-        bl_container_category.setEventForwardingHelper(EventForwardingHelper { downX, downY, moveX, moveY ->
-            true
-        })
-
-        bl_container_category.setBounceCallBack(object : BounceCallBack {
-            //刷新回调
-            override fun startRefresh() {
-                arguments?.getInt(TAG, 0).let {
-                    mPresenter.getImages(it ?: 0, 1, Constants.PAGE_INFO_SIZE_PRE_PAGE_10)
-                }
-                bl_container_category.setNoMoreData(false)
-                // TODO 如下测试某个系列的一张图
-//                mPresenter.getOneImageInSeries("176eca57a37f4de8936c401d1b2afa42", "002")
-
-            }
-
-            override fun startLoadingMore() {
-                currentPage++
-                if (currentPage <= totalPage) {
-                    arguments?.getInt(TAG, 0).let {
-                        mPresenter.getImages(it ?: 0, currentPage, 10)
-                    }
-                }
-            }
-        })
     }
 
     override fun onFirstUserVisible() {
@@ -119,12 +81,6 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
             mImages.addAll(it.list)
 
             rv_root_category.adapter?.notifyDataSetChanged()
-            bl_container_category.setRefreshCompleted()
-            bl_container_category.setLoadingMoreCompleted()
-
-            if (currentPage == totalPage) {
-                bl_container_category.setNoMoreData(true)
-            }
         })
 
         mPresenter.mImage.observe(this, Observer {
@@ -132,7 +88,6 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
             mImages.clear()
             mImages.add(it)
             rv_root_category.adapter?.notifyDataSetChanged()
-            bl_container_category.setRefreshCompleted()
         })
 
     }
@@ -179,7 +134,8 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 //                        .plus(bean.imageUrl.split("@@")[0])
 //                )
                 ImageLoader.loadImgWithCenterCropAndNoPlaceHolder(
-                    imageView,bean)
+                    imageView, bean
+                )
             }
 
         }
@@ -276,7 +232,7 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
     }
 
     override fun showError(message: String) {
-        JSnackBar.Builder().attachView(cl_container_category)
+        JSnackBar.Builder().attachView(bl_container_category)
             .message("message")
             .default()
             .build()
@@ -289,6 +245,7 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
         "https://img-my.csdn.net/uploads/201508/05/1438760758_3497.jpg",
         "https://img-my.csdn.net/uploads/201508/05/1438760758_6667.jpg",
         "https://img-my.csdn.net/uploads/201508/05/1438760757_3588.jpg",
-        "https://img-my.csdn.net/uploads/201508/05/1438760756_3304.jpg")
+        "https://img-my.csdn.net/uploads/201508/05/1438760756_3304.jpg"
+    )
 
 }

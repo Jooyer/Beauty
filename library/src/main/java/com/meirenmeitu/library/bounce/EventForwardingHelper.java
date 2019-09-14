@@ -1,4 +1,4 @@
-package com.meirenmeitu.library.refresh;
+package com.meirenmeitu.library.bounce;
 
 /**
  * 第一层的事件转发判断，用户希望在转发前做一些自己的判断处理，比如x方向的变化大于y方向，认为需要转发，otherwise；
