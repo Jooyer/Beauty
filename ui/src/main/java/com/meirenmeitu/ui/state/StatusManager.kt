@@ -6,6 +6,15 @@ import android.view.ViewStub
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 
+/**
+ *      修饰符	                类成员	                    顶级声明
+ *   public(default)	 任何地方可见	                    任何地方可见
+ *  internal	        在module中可见	                在module中可见
+ *  protected	        在子类中可见                      	–
+ *  private	            在类内部可见	                    在当前文件中可见
+ *
+ *  值得一题的是，拓展方法并不能访问private和protected成员
+ */
 
 /**
  * Desc: 视图管理器
@@ -23,61 +32,66 @@ class StatusManager(builder: Builder) {
     /**
      * 内容视图
      */
-    var mContentLayoutView: View
+    internal var mContentLayoutView: View
     /**
      * 内容视图布局
      */
-    var mContentLayoutResId: Int = 0
+    internal var mContentLayoutResId: Int = 0
     /**
      * Loading视图
      */
-    var mLoadingLayoutResId: Int = 0
+    internal var mLoadingLayoutResId: Int = 0
 
     /**
      * 网络异常 ViewStub
      */
-    var mNetworkErrorVs: ViewStub? = null
+    internal var mNetworkErrorVs: ViewStub? = null
     /**
      * 网络异常 View
      */
-    var mNetworkErrorView: View? = null
+    internal var mNetworkErrorView: View? = null
     /**
      * 网络异常重试按钮 ID
      */
-    var mNetWorkErrorRetryViewId: Int = 0
+    internal var mNetWorkErrorRetryViewId: Int = 0
 
     /**
      * 空视图 ViewStub
      */
-    var mEmptyDataVs: ViewStub? = null
+    internal var mEmptyDataVs: ViewStub? = null
     /**
      * 空视图View
      */
-    var mEmptyDataView: View? = null
+    internal var mEmptyDataView: View? = null
     /**
      * 空视图重试按钮 ID
      */
-    var mEmptyDataRetryViewId: Int = 0
+    internal var mEmptyDataRetryViewId: Int = 0
     /**
      * 请求错误 ViewStub
      */
-    var mErrorVs: ViewStub? = null
+    internal var mErrorVs: ViewStub? = null
     /**
      * 请求错误 View
      */
-    var mErrorView: View? = null
+    internal var mErrorView: View? = null
     /**
      * 请求错误重试按钮 ID
      */
-    var mErrorRetryViewId: Int = 0
+    internal var mErrorRetryViewId: Int = 0
     /**
      * 重试按钮 ID
      */
-    var mRetryViewId: Int = 0
+    internal var mRetryViewId: Int = 0
     /**
      * 开始加载时间
      */
-    var mStartTime: Long = 0
+    private var mStartTime: Long = 0
+
+    /**
+     * 延迟显示 ContentView
+     */
+    private var mDelayTime: Long = 1200
 
     fun setTransY(transY: Float) {
         mRootFrameLayout.setTransY(transY)
@@ -99,10 +113,10 @@ class StatusManager(builder: Builder) {
      */
     fun showContent() {
         val endTime = System.currentTimeMillis()
-        if (endTime - mStartTime >= 1200) {
+        if (endTime - mStartTime >= mDelayTime) {
             delayShowContent(0)
         } else {
-            delayShowContent(2000 + mStartTime - endTime)
+            delayShowContent(mDelayTime + mStartTime - endTime)
         }
     }
 
@@ -163,6 +177,8 @@ class StatusManager(builder: Builder) {
 
         var retryViewId: Int = 0
 
+        var delayTime: Long = 1200
+
         var onRetryListener: OnRetryListener? = null
 
         fun loadingView(@LayoutRes loadingLayoutResId: Int): Builder {
@@ -220,6 +236,11 @@ class StatusManager(builder: Builder) {
             return this
         }
 
+        fun delayTime(delayTime: Long): Builder {
+            this.delayTime = delayTime
+            return this
+        }
+
         fun onRetryListener(onRetryListener: OnRetryListener): Builder {
             this.onRetryListener = onRetryListener
             return this
@@ -250,6 +271,7 @@ class StatusManager(builder: Builder) {
         mContentLayoutView = builder.contentLayoutView
         mRootFrameLayout = RootStatusLayout(mContext)
         mRootFrameLayout.setStatusManager(this)
+        mDelayTime = builder.delayTime
         mRootFrameLayout.setOnRetryListener(builder.onRetryListener)
     }
 
