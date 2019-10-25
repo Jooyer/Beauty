@@ -17,10 +17,10 @@ dependencies {
     api rootProject.ext.dependencies.androidx_appcompat
     api rootProject.ext.dependencies.androidx_core
     api rootProject.ext.dependencies.androidx_legacy
-
-    api rootProject.ext.dependencies.appcompat_v7
-    api rootProject.ext.dependencies.appcompat_v4
-    api rootProject.ext.dependencies.design
+    api rootProject.ext.dependencies.material
+    api(rootProject.ext.dependencies.recyclerview) {
+        exclude module: 'support-v7'//根据组件名排除
+    }
     api rootProject.ext.dependencies.constraint_layout
 
 
@@ -31,17 +31,9 @@ dependencies {
     api rootProject.ext.dependencies.converter_scalars
     api rootProject.ext.dependencies.converter_gson
 
-//    api rootProject.ext.dependencies.extensions
-//    api rootProject.ext.dependencies.viewmodel
-//    api rootProject.ext.dependencies.livedata
-//    kapt rootProject.ext.dependencies.compiler
-//    api rootProject.ext.dependencies.room
-//    kapt rootProject.ext.dependencies.room_compiler
-
-    api rootProject.ext.dependencies.lifecycle_runtime
+    api rootProject.ext.dependencies.lifecycle_extensions
     kapt rootProject.ext.dependencies.lifecycle_compiler
-    api rootProject.ext.dependencies.lifecycle_livedata
-    api rootProject.ext.dependencies.lifecycle_viewmodel
+
     api rootProject.ext.dependencies.room_runtime
     kapt rootProject.ext.dependencies.room_compiler
 
@@ -51,6 +43,12 @@ dependencies {
 
     api rootProject.ext.dependencies.multidex
 
+    api rootProject.ext.dependencies.glide
+    kapt rootProject.ext.dependencies.glide_compiler
+
+    api rootProject.ext.dependencies.rxrouter
+    kapt rootProject.ext.dependencies.rxrouter_compiler
+    
     api rootProject.ext.dependencies.mmkv
 
     api rootProject.ext.dependencies.preLoader
@@ -58,19 +56,8 @@ dependencies {
     // 通过 Jar 引入了
 //    api rootProject.ext.dependencies.bugly
 
-    api rootProject.ext.dependencies.glide
-    kapt rootProject.ext.dependencies.glide_compiler
-
-
     api rootProject.ext.dependencies.packer_ng
 
-    api rootProject.ext.dependencies.rxrouter
-    kapt rootProject.ext.dependencies.rxrouter_compiler
-
-    api(rootProject.ext.dependencies.recyclerview) {
-        exclude module: 'support-v7'//根据组件名排除
-    }
-    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     // https://stackoverflow.com/questions/49038630/android-compilation-error-with-v7-support-lib-27-1-0-program-type-already-pres/49040625#49040625 (可以参考)
     // 以下无效方式
     // Error:Program type already present: android.support.v7.recyclerview.extensions.ListAdapter

@@ -13,8 +13,7 @@ import com.meirenmeitu.library.R;
 
 
 /**
- * https://github.com/tangxianqiang/LightRefresh
- * 继承于帧布局，下拉刷新、上拉加载更多的容器；
+ * https://github.com/tangxianqiang/LightRefresh  --> 继承于帧布局，下拉刷新、上拉加载更多的容器
  *
  * @author tangxianqiang
  * Jooyer修改为

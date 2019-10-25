@@ -82,7 +82,8 @@ class JRefreshLayout(context: Context, attrs: AttributeSet?) :
         mTarget!!.isClickable = true
         var targetNestedScrollingEnabled = false
         if (mTarget is NestedScrollingChild) {
-            targetNestedScrollingEnabled = (mTarget as NestedScrollingChild).isNestedScrollingEnabled
+            targetNestedScrollingEnabled =
+                (mTarget as NestedScrollingChild).isNestedScrollingEnabled
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             targetNestedScrollingEnabled = mTarget!!.isNestedScrollingEnabled
         }
@@ -169,10 +170,22 @@ class JRefreshLayout(context: Context, attrs: AttributeSet?) :
     // 参数dyConsumed: 表示target已经消费的x方向的距离
     // 参数dxUnconsumed: 表示x方向剩下的滑动距离
     // 参数dyUnconsumed: 表示y方向剩下的滑动距离
-    override fun onNestedScroll(target: View, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int) {
+    override fun onNestedScroll(
+        target: View,
+        dxConsumed: Int,
+        dyConsumed: Int,
+        dxUnconsumed: Int,
+        dyUnconsumed: Int
+    ) {
 //        println("onNestedScroll=============dyUnconsumed: " + dyUnconsumed + " =======mParentOffsetInWindow[1]: " + mParentOffsetInWindow[1])
         // 先将滑动事件转发给 父View
-        dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow)
+        dispatchNestedScroll(
+            dxConsumed,
+            dyConsumed,
+            dxUnconsumed,
+            dyUnconsumed,
+            mParentOffsetInWindow
+        )
         // 父View 未消耗的滑动距离 + 当前 View 在父布局中移动的距离(理解为 父View 移动时携带子View也移动了)
         val dy = dyUnconsumed + mParentOffsetInWindow[1]
         if (!RefreshAnimUtil.mAnimRunning) {
@@ -190,7 +203,12 @@ class JRefreshLayout(context: Context, attrs: AttributeSet?) :
         }
     }
 
-    override fun onNestedFling(target: View, velocityX: Float, velocityY: Float, consumed: Boolean): Boolean {
+    override fun onNestedFling(
+        target: View,
+        velocityX: Float,
+        velocityY: Float,
+        consumed: Boolean
+    ): Boolean {
         return dispatchNestedFling(velocityX, velocityY, consumed)
     }
 
@@ -274,7 +292,11 @@ class JRefreshLayout(context: Context, attrs: AttributeSet?) :
         return mNestedChildHelper.dispatchNestedPreScroll(dx, dy, consumed, offsetInWindow)
     }
 
-    override fun dispatchNestedFling(velocityX: Float, velocityY: Float, consumed: Boolean): Boolean {
+    override fun dispatchNestedFling(
+        velocityX: Float,
+        velocityY: Float,
+        consumed: Boolean
+    ): Boolean {
         return mNestedChildHelper.dispatchNestedFling(velocityX, velocityY, consumed)
     }
 
@@ -570,7 +592,7 @@ class JRefreshLayout(context: Context, attrs: AttributeSet?) :
     }
 
 
-    private val mRefreshOrLoadTimeOffsetTime = 3000L
+    private var mRefreshOrLoadTimeOffsetTime = 3000L
 
     private val mAutoRefresh = Runnable {
         mHandler!!.onRefresh(this)
@@ -651,6 +673,11 @@ class JRefreshLayout(context: Context, attrs: AttributeSet?) :
         mRefreshingOrLoading = false
         mFooterView!!.updateState(IFooterWrapper.STATE.NOTHING)
     }
+
+    fun setRefreshOrLoadTimeOffsetTime(refreshOrLoadTimeOffsetTime: Long) {
+        mRefreshOrLoadTimeOffsetTime = refreshOrLoadTimeOffsetTime
+    }
+
 
     /**
      * @param resistance range 0 ~ 1f

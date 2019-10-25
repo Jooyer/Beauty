@@ -25,15 +25,9 @@ public class RefreshAnimUtil {
         }
     };
 
-    private static final ValueAnimator mRefreshAnimator = new ValueAnimator();
-    private static final ValueAnimator mFinishRefreshAnimator = new ValueAnimator();
-    private static final ValueAnimator mAutoRefreshAnimator = new ValueAnimator();
-    private static final ValueAnimator mLoadingAnimator = new ValueAnimator();
-    private static final ValueAnimator mFinishLoadAnimator = new ValueAnimator();
-    private static final ValueAnimator mNoMoreAnimator = new ValueAnimator();
-
     public static void startRefreshing(final View view, final View targetView, final TargetHandler handler,
                                        int newHeight, Animator.AnimatorListener listener) {
+        ValueAnimator mRefreshAnimator = new ValueAnimator();
         mRefreshAnimator.setIntValues(view.getLayoutParams().height, newHeight);
         mRefreshAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -60,6 +54,7 @@ public class RefreshAnimUtil {
 
     public static void startLoading(final View view, final View targetView, final TargetHandler handler,
                                     int newHeight, Animator.AnimatorListener listener) {
+        ValueAnimator mLoadingAnimator = new ValueAnimator();
         mLoadingAnimator.setIntValues(view.getLayoutParams().height, newHeight);
         mLoadingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -85,6 +80,7 @@ public class RefreshAnimUtil {
 
     public static void startAutoRefreshing(final View view, final View targetView, final TargetHandler handler,
                                            int newHeight, Animator.AnimatorListener listener) {
+        ValueAnimator mAutoRefreshAnimator = new ValueAnimator();
         mAutoRefreshAnimator.setIntValues(view.getLayoutParams().height, newHeight);
         mAutoRefreshAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -112,6 +108,7 @@ public class RefreshAnimUtil {
     public static void startFinishRefresh(final View view, final View targetView, final TargetHandler handler,
                                           int newHeight, Animator.AnimatorListener listener) {
 //        System.out.println("startFinishRefresh========= " + view.getLayoutParams().height  + " ======newHeight: " + newHeight);
+        ValueAnimator mFinishRefreshAnimator = new ValueAnimator();
         mFinishRefreshAnimator.setIntValues(view.getLayoutParams().height, newHeight);
         mFinishRefreshAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -139,6 +136,7 @@ public class RefreshAnimUtil {
 
     public static void startFinishLoad(final View view, final View targetView, final TargetHandler handler,
                                        int newHeight, Animator.AnimatorListener listener) {
+        ValueAnimator mFinishLoadAnimator = new ValueAnimator();
         mFinishLoadAnimator.setIntValues(view.getLayoutParams().height, newHeight);
         mFinishLoadAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -164,6 +162,7 @@ public class RefreshAnimUtil {
     }
 
     public static void setNoMoreAnimator(final View view, final View targetView, final TargetHandler handler) {
+        ValueAnimator mNoMoreAnimator = new ValueAnimator();
         mNoMoreAnimator.setIntValues(view.getLayoutParams().height, 0);
         mNoMoreAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override

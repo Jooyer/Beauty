@@ -2,8 +2,9 @@ package com.meirenmeitu.net.cover
 
 import com.google.gson.Gson
 import com.google.gson.TypeAdapter
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okio.Buffer
 import retrofit2.Converter
 import java.io.OutputStreamWriter
@@ -21,7 +22,7 @@ import java.nio.charset.Charset
 class DataRequestBodyConverter<T>(private val adapter: TypeAdapter<T>, private val gson: Gson) :
     Converter<T, RequestBody> {
 
-    private val MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8")
+    private val MEDIA_TYPE = "application/json; charset=UTF-8".toMediaTypeOrNull()
     private val UTF_8 = Charset.forName("UTF-8")
 
     override fun convert(value: T): RequestBody {
@@ -31,6 +32,6 @@ class DataRequestBodyConverter<T>(private val adapter: TypeAdapter<T>, private v
         adapter.write(jsonWriter, value)
         jsonWriter.flush()
         jsonWriter.close()
-        return RequestBody.create(MEDIA_TYPE, buffer.readByteString())
+        return buffer.readByteString().toRequestBody(MEDIA_TYPE)
     }
 }
