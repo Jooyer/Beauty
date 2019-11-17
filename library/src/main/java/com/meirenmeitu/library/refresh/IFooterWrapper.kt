@@ -1,55 +1,52 @@
 package com.meirenmeitu.library.refresh
 
-import android.view.View
-
 /**
- * Desc:加载接口
+ * Desc: 提供上拉加载控件
  * Author: Jooyer
- * Date: 2019-08-26
- * Time: 16:59
+ * Date: 2019-08-06
+ * Time: 15:38
  */
 interface IFooterWrapper {
 
-
-    enum class STATE {
-        // 加载/刷新
-        REFRESH,
-        // 下拉刷新
-        START,
-        // 松开刷新
-        PULL,
-        COMPLETE,
-        // 如果正在刷新,则加载更多不能触发的,反之一样
-        LOADING,
-        // 没有更多数据
-        NOTHING
-    }
-    fun getState(): STATE
-
-    fun setState(state: STATE)
-
-    fun updateState(state: STATE)
-
-    fun getFooterView(): View
-
-    fun getOriginalHeight(): Int
-
-    fun canTargetScroll(): Boolean
-
-    fun onRefreshBegin(targetView: View)
+    /**
+     * 上拉中
+     */
+    fun onPullUp(scrollY: Int)
 
     /**
-     * 加载(刷新)完成/未达加载(刷新)标准而重置
-     * @param state -->  -1 无数据, 0 重置, 1 加载中, 2 加载完成,
+     * 释放即可加载
      */
-    fun onPrepare(targetView: View,state: Int)
+    fun onPullUpAndReleasable(scrollY: Int)
 
-    fun onPulling(dis: Float, targetView: View)
+    /**
+     * 准备加载
+     */
+    fun onLoadReady(scrollY: Int)
 
-    fun onNoMoreData( targetView: View)
+    /**
+     * 加载中
+     */
+    fun onLoading(scrollY: Int)
 
-    fun addToRefreshLayout(layout: JRefreshLayout)
+    /**
+     * 刷新完成
+     */
+    fun onLoadComplete(scrollY: Int, isLoadSuccess: Boolean)
 
-    fun getTargetHandler():TargetHandler
+    /**
+     * 加载取消
+     */
+    fun onLoadCancel(scrollY: Int)
+
+    /**
+     * 没有数据
+     */
+    fun onNoMore()
+
+
+    /**
+     * 获取加载视图高度
+     */
+    fun getLoadHeight(): Int
 
 }
