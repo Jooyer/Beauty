@@ -1,56 +1,46 @@
 package com.meirenmeitu.library.refresh
 
-import android.view.View
-
 /**
- * Desc: 刷新接口
+ * Desc: 提供刷新头部控件
  * Author: Jooyer
- * Date: 2019-08-26
- * Time: 17:00
+ * Date: 2019-08-06
+ * Time: 15:38
  */
 interface IHeaderWrapper {
 
-
-    enum class STATE {
-        // 加载/刷新
-        REFRESH,
-        // 下拉刷新
-        START,
-        // 松开刷新
-        PULL,
-        COMPLETE,
-        // 如果正在刷新,则加载更多不能触发的,反之一样
-        LOADING,
-        // 没有更多数据
-        NOTHING
-    }
-
-    fun getState(): STATE
-
-    fun setState(state: STATE)
-
-    fun updateState(state: STATE)
-
-    fun getHeaderView(): View
-
-    fun getOriginalHeight(): Int
-
-    fun canTargetScroll(): Boolean
-
-    fun onRefreshBegin(targetView: View)
-
-    fun onAutoRefresh(targetView: View)
+    /**
+     * 下拉中
+     */
+    fun onPullDown(scrollY: Int, headerHeight: Int)
 
     /**
-     * 加载(刷新)完成/未达加载(刷新)标准而重置
-     * @param state --> 0 重置, 1 加载中, 2 加载完成,
+     * 释放即可刷新
      */
-    fun onPrepare(targetView: View,state: Int)
+    fun onPullDownAndReleasable(scrollY: Int, headerHeight: Int)
 
-    fun onPulling(dis: Float, targetView: View)
+    /**
+     * 准备刷新
+     */
+    fun onRefreshReady(scrollY: Int, headerHeight: Int)
 
-    fun addToRefreshLayout(layout: JRefreshLayout)
+    /**
+     * 刷新中
+     */
+    fun onRefreshing(scrollY: Int, headerHeight: Int)
 
-    fun getTargetHandler(): TargetHandler
+    /**
+     * 刷新完成
+     */
+    fun onRefreshComplete(scrollY: Int, headerHeight: Int, isRefreshSuccess: Boolean)
+
+    /**
+     * 取消刷新
+     */
+    fun onRefreshCancel(scrollY: Int, headerHeight: Int)
+
+    /**
+     * 获取刷视图高度
+     */
+    fun getRefreshHeight(): Int
 
 }

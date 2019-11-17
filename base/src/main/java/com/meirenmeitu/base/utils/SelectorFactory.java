@@ -19,6 +19,16 @@ import androidx.core.content.ContextCompat;
  * Des SelectorDrawable 工具类
  */
 
+/*
+用法举例:
+  Button.background = SelectorFactory.newShapeSelector()
+            .setDefaultBgColor(ContextCompat.getColor(this, R.color.color_666666))
+            .setPressedBgColor(ContextCompat.getColor(this, R.color.main_theme_color))
+            .setCornerRadius(DensityUtils.dpToPx(5))
+            .create()
+
+ */
+
 public class SelectorFactory {
 
     public static ShapeSelector newShapeSelector() {
