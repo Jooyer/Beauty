@@ -101,7 +101,7 @@ import java.util.*
  * Room
  * https://www.jianshu.com/p/463288377abe
  * LiveDataBus
- * https://www.jianshu.com/p/eb1d2b5b10dc
+ * https://blog.csdn.net/geyuecang/article/details/89028283
  * 进度气泡
  * https://www.jianshu.com/p/0009aadb31bb
  * 拖拽回弹(还有一个缩放效果很棒)

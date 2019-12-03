@@ -722,7 +722,9 @@ public class PowerRefreshLayout extends ViewGroup implements NestedScrollingPare
         if (!isAutoRefresh) return;
         isRefreshing = true;
         // 这里是为了改变自动刷新时默认显示文本,否则会显示下拉刷新,然后在动画执行完成后立马改为 正在刷新
-        updateStatus(State.HEADER_REFRESHING);
+        if (mHeaderListener != null) {
+            mHeaderListener.onRefreshing(getScrollY(), mHeaderViewHeight);
+        }
         performAnim(0, -mHeaderViewHeight, new AnimListener() {
             @Override
             public void onGoing() {
@@ -1010,15 +1012,15 @@ public class PowerRefreshLayout extends ViewGroup implements NestedScrollingPare
     }
 
     /**
-     * {@link SwipeRefreshLayout#canChildScrollUp()} method
+     * {@link androidx.swiperefreshlayout.widget.androidx.swiperefreshlayout.widget.SwipeRefreshLayout#canChildScrollUp()} method
      * 对 嵌套 View 的滑动逻辑的处理
      */
     public interface OnChildScrollUpCallback {
         /**
-         * Callback that will be called when {@link SwipeRefreshLayout#canChildScrollUp()} method
+         * Callback that will be called when {@link androidx.swiperefreshlayout.widget.SwipeRefreshLayout#canChildScrollUp()} method
          * is called to allow the implementer to override its behavior.
          *
-         * @param parent SwipeRefreshLayout that this callback is overriding.
+         * @param parent androidx.swiperefreshlayout.widget.SwipeRefreshLayout that this callback is overriding.
          * @param child  The child view of Swipe
          * @return Whether it is possible for the child view of parent layout to scroll up.
          */
