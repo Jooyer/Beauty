@@ -20,7 +20,8 @@ import io.reactivex.disposables.CompositeDisposable
  * Date: 2018-07-30
  * Time: 11:16
  */
-abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.Action1<View>, OnRetryListener {
+abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.Action1<View>,
+    OnRetryListener {
     val mCompositeDisposable = CompositeDisposable()
     lateinit var mPresenter: T
 
@@ -78,7 +79,11 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
         lifecycle.addObserver(mPresenter)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return initStatusManager(inflater, container, savedInstanceState)
     }
 
@@ -310,7 +315,11 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
      * 此函数开始数据加载的操作，且仅调用一次
      * 主要是加载动画,初始化展示数据的布局
      */
-    private fun initStatusManager(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    private fun initStatusManager(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         if (0 != getLayoutId()) {
             val contentView = inflater.inflate(getLayoutId(), container, false)
             initializedViews(savedInstanceState, contentView)
@@ -335,7 +344,12 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
             .retryViewId(R.id.tv_retry_load_data)
             .onRetryListener(this)
             .build()
-        mStatusManager?.showLoading()
+
+        mStatusManager?.setTransY(getStatusLayoutTransY())
+        if (onInitialAndShowLoading()) {
+            mStatusManager?.showLoading()
+        }
+
         return mStatusManager?.getRootLayout()!!
     }
 
@@ -352,6 +366,21 @@ abstract class BaseFragment<T : IBasePresenter> : Fragment(), BaseView, RxView.A
         RxView.disposeBindClick()
         mCompositeDisposable.dispose()
     }
+
+    /**
+     * 平移 RootStatusLayout ,显示出布局头部一些UI
+     */
+    open fun getStatusLayoutTransY(): Float {
+        return 0F
+    }
+
+    /**
+     *  是否初始化完成就显示 Loading , 默认显示
+     */
+    open fun onInitialAndShowLoading(): Boolean {
+        return true
+    }
+
 
     /**
      *  是否使用视图布局管理器

@@ -20,6 +20,10 @@ import com.meirenmeitu.beauty.R
 import com.meirenmeitu.beauty.bean.ImageBean
 import com.meirenmeitu.beauty.presenter.CategoryPresenter
 import com.meirenmeitu.library.dragview.OnDataListener
+import com.meirenmeitu.library.refresh.DefaultFooterView
+import com.meirenmeitu.library.refresh.DefaultHeaderView
+import com.meirenmeitu.library.refresh.OnRefreshAndLoadListener
+import com.meirenmeitu.library.refresh.PowerRefreshLayout
 import com.meirenmeitu.library.utils.Constants
 import com.meirenmeitu.library.utils.DensityUtils
 import com.meirenmeitu.library.utils.ImageLoader
@@ -72,7 +76,25 @@ class CategoryFragment : BaseFragment<CategoryPresenter>() {
 
     override fun onFirstUserVisible() {
         setAdapter()
-//        bl_container_category.autoRefresh()
+
+        bl_container_category.addHeader(DefaultHeaderView(mActivity))
+        bl_container_category.addFooter(DefaultFooterView(mActivity))
+
+        bl_container_category.setOnRefreshAndLoadListener(object :OnRefreshAndLoadListener(){
+            override fun onRefresh(refreshLayout: PowerRefreshLayout) {
+                refreshLayout.postDelayed({
+                    bl_container_category.stopRefresh(true)
+                },2500)
+            }
+
+            override fun onLoad(refreshLayout: PowerRefreshLayout) {
+                refreshLayout.postDelayed({
+                    bl_container_category.stopLoadMore(true)
+                },2500)
+            }
+        })
+
+
         mPresenter.mImages.observe(this, Observer {
             totalPage = Math.ceil(it.total.toDouble() / Constants.PAGE_INFO_SIZE_PRE_PAGE_10).toLong()
             if (1L == currentPage) {

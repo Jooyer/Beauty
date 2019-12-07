@@ -4,8 +4,10 @@ import android.content.Context
 import android.graphics.Color
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.meirenmeitu.library.R
 import com.meirenmeitu.library.utils.DensityUtils
@@ -18,8 +20,9 @@ import com.meirenmeitu.library.utils.DensityUtils
  */
 class DefaultFooterView(context: Context) : LinearLayout(context), IFooterWrapper {
 
-    private var tvHeaderTip: TextView? = null
-    private var ivHeaderTip: ImageView? = null
+    private var tvFooterTip: TextView? = null
+    private var ivFooterTip: ImageView? = null
+    private var pbRefreshing: ProgressBar? = null
 
     init {
         initView()
@@ -27,8 +30,9 @@ class DefaultFooterView(context: Context) : LinearLayout(context), IFooterWrappe
 
     private fun initView() {
         val view = LayoutInflater.from(context).inflate(R.layout.footer_default, this, false)
-        ivHeaderTip = view.findViewById<ImageView>(R.id.iv_tip)
-        tvHeaderTip = view.findViewById<TextView>(R.id.tv_tip)
+        ivFooterTip = view.findViewById<ImageView>(R.id.iv_tip)
+        tvFooterTip = view.findViewById<TextView>(R.id.tv_tip)
+        pbRefreshing = view.findViewById<ProgressBar>(R.id.pb_loading)
         val params = LinearLayout.LayoutParams(-1, -2)
         params.gravity = Gravity.CENTER_VERTICAL
         setBackgroundColor(Color.WHITE)
@@ -37,11 +41,16 @@ class DefaultFooterView(context: Context) : LinearLayout(context), IFooterWrappe
 
 
     override fun onPullUp(scrollY: Int) {
-        tvHeaderTip?.text = "上拉加载更多"
+        pbRefreshing?.visibility = View.GONE
+        ivFooterTip?.visibility = View.VISIBLE
+        ivFooterTip?.setImageResource(R.mipmap.ic_refresh_pull_up)
+        tvFooterTip?.text = "上拉加载更多"
     }
 
     override fun onPullUpAndReleasable(scrollY: Int) {
-        tvHeaderTip?.text = "松手可加载"
+        pbRefreshing?.visibility = View.GONE
+        ivFooterTip?.visibility = View.VISIBLE
+        tvFooterTip?.text = "松手可加载"
     }
 
     override fun onLoadReady(scrollY: Int) {
@@ -49,11 +58,16 @@ class DefaultFooterView(context: Context) : LinearLayout(context), IFooterWrappe
     }
 
     override fun onLoading(scrollY: Int) {
-        tvHeaderTip?.text = "正在加载"
+        pbRefreshing?.visibility = View.VISIBLE
+        ivFooterTip?.visibility = View.GONE
+        tvFooterTip?.text = "正在加载..."
     }
 
     override fun onLoadComplete(scrollY: Int, isLoadSuccess: Boolean) {
-        tvHeaderTip?.text = "加载完成"
+        pbRefreshing?.visibility = View.GONE
+        ivFooterTip?.visibility = View.VISIBLE
+        ivFooterTip?.setImageResource(R.mipmap.ic_refresh_data_completed)
+        tvFooterTip?.text = "加载完成"
     }
 
     override fun onLoadCancel(scrollY: Int) {
@@ -61,7 +75,7 @@ class DefaultFooterView(context: Context) : LinearLayout(context), IFooterWrappe
     }
 
     override fun onNoMore() {
-        tvHeaderTip?.text = "没有更多数据"
+        tvFooterTip?.text = "没有更多数据"
     }
 
     override fun getLoadHeight(): Int {

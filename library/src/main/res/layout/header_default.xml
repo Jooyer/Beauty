@@ -21,7 +21,6 @@
         android:layout_height="24dp"
         android:layout_gravity="center_vertical"
         android:layout_marginLeft="64dp"
-        android:background="@mipmap/ic_refresh_pull_down"
         android:visibility="visible"
         />
 

@@ -98,8 +98,25 @@ abstract class BaseActivity<T : IBasePresenter> : AppCompatActivity(),
             .retryViewId(R.id.tv_retry_load_data)
             .onRetryListener(this)
             .build()
-        mStatusManager?.showLoading()
+        mStatusManager?.setTransY(getStatusLayoutTransY())
+        if (onInitialAndShowLoading()) {
+            mStatusManager?.showLoading()
+        }
         return mStatusManager?.getRootLayout()!!
+    }
+
+    /**
+     * 平移 RootStatusLayout ,显示出布局头部一些UI
+     */
+    open fun getStatusLayoutTransY(): Float{
+        return 0F
+    }
+
+    /**
+     *  是否初始化完成就显示 Loading , 默认显示
+     */
+    open fun onInitialAndShowLoading(): Boolean {
+        return true
     }
 
 
